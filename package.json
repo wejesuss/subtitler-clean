@@ -4,7 +4,10 @@
   "description": "Create subtitles for audio/video using yYoutube",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint src/** --fix",
+    "lint-staged": "lint-staged",
+    "prepare": "husky install"
   },
   "author": "Wemerson Jesus",
   "license": "ISC",
@@ -17,6 +20,13 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.2.0",
     "git-commit-msg-linter": "^3.2.8",
+    "husky": "^7.0.4",
+    "lint-staged": "^12.1.2",
     "typescript": "^4.5.2"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "npm run lint"
+    ]
   }
 }
