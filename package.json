@@ -9,6 +9,8 @@
   "author": "Wemerson Jesus",
   "license": "ISC",
   "devDependencies": {
-    "git-commit-msg-linter": "^3.2.8"
+    "@types/node": "^16.11.11",
+    "git-commit-msg-linter": "^3.2.8",
+    "typescript": "^4.5.2"
   }
 }
