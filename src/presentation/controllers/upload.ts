@@ -1,13 +1,15 @@
 export class UploadController {
   handle (httpRequest: any): any {
-    if (!httpRequest.body.language) {
+    const { body, file } = httpRequest
+
+    if (!body.language) {
       return {
         statusCode: 400,
         body: new Error('No language provided')
       }
     }
 
-    if (!httpRequest.file) {
+    if (!file) {
       return {
         statusCode: 400,
         body: new Error('No file information provided')
