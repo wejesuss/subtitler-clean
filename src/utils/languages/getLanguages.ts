@@ -24,4 +24,14 @@ export class GetLanguages {
 
     return list
   }
+
+  verify (language: string): string | Error {
+    const found = Object.keys(this._languages).find(value => value === language)
+
+    if (found) {
+      return this._languages[found]
+    }
+
+    return new Error('Provided language is not valid')
+  }
 }
