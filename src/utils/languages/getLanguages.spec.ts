@@ -16,4 +16,13 @@ describe('GetLanguages', () => {
       expect(language).toHaveProperty('name')
     })
   })
+
+  test('Should return error if no valid language is provided', () => {
+    const language = 'dafe'
+
+    const sut = new GetLanguages()
+    const err = sut.verify(language)
+
+    expect(err).toEqual(new Error('Provided language is not valid'))
+  })
 })
