@@ -6,5 +6,12 @@ export class UploadController {
         body: new Error('No language provided')
       }
     }
+
+    if (!httpRequest.file) {
+      return {
+        statusCode: 400,
+        body: new Error('No file information provided')
+      }
+    }
   }
 }
