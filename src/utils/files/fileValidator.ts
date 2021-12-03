@@ -8,20 +8,26 @@ interface File {
 }
 
 export class FileValidator {
-  verify (fileInfo: File): any {
-    const { mimetype } = fileInfo
-    let errorFields = ''
+  private errorFields = ''
+  private readonly mimetypeRegEx = /^(audio|video)\/([0-9A-Za-z-_]+)$/g
 
-    const test = /(audio|video)\/([0-9A-Za-z-_]+)/g
-    const isMimetypeValid = test.test(mimetype)
+  private verifyMimetype (mimetype: string): void {
+    const isMimetypeValid = this.mimetypeRegEx.test(mimetype)
 
     if (!isMimetypeValid) {
-      errorFields += 'mimetype'
+      this.errorFields += 'mimetype'
     }
+  }
 
-    if (errorFields) {
+  verify (fileInfo: File): any {
+    this.errorFields = ''
+    const { mimetype } = fileInfo
+
+    this.verifyMimetype(mimetype)
+
+    if (this.errorFields) {
       const err = new Error('No valid file information provided')
-      err.name = errorFields
+      err.name = this.errorFields
       return err
     }
   }
