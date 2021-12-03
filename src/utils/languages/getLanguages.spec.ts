@@ -25,4 +25,14 @@ describe('GetLanguages', () => {
 
     expect(err).toEqual(new Error('Provided language is not valid'))
   })
+
+  test('Should return language name if a valid language is provided', () => {
+    const language = 'en'
+    const expected = 'Inglês'
+
+    const sut = new GetLanguages()
+    const name = sut.verify(language)
+
+    expect(name).toBe(expected)
+  })
 })
