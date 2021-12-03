@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --passWithNoTests --watch",
+    "test:clear": "jest --clearCache",
     "test:staged": "jest --passWithNoTests",
     "lint": "eslint src/** --fix",
     "lint-staged": "lint-staged",
