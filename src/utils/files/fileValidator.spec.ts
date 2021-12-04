@@ -106,4 +106,20 @@ describe('FileValidator', () => {
     expect(fileOrError).toEqual(err)
     expect(fileOrError).toHaveProperty('name', err.name)
   })
+
+  test('Should return file itself if nothing is wrong', () => {
+    const file = {
+      mimetype: 'audio/mpeg3',
+      size: 1073741824,
+      destination: path.resolve(__dirname),
+      filename: 'input.mp3',
+      path: path.resolve(__dirname, 'input.mp3'),
+      buffer: Buffer.from([109, 112, 51])
+    }
+
+    const sut = new FileValidator()
+    const fileOrError = sut.verify(file)
+
+    expect(fileOrError).toMatchObject(file)
+  })
 })
