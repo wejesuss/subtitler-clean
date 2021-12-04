@@ -41,4 +41,25 @@ describe('FileValidator', () => {
     expect(fileOrError).toEqual(err)
     expect(fileOrError).toHaveProperty('name', err.name)
   })
+
+  test('Should return the appropriate error name property', () => {
+    const greaterThan1GigaByte = (1073741824 + 1)
+    const incorrectMimetype = 'fse/mpeg'
+
+    const file = {
+      mimetype: incorrectMimetype,
+      size: greaterThan1GigaByte,
+      destination: path.resolve(__dirname),
+      filename: 'input.mp4',
+      path: path.resolve(__dirname, 'input.mp4')
+    }
+
+    const sut = new FileValidator()
+    const fileOrError = sut.verify(file)
+    const err = new Error('No valid file information provided')
+    err.name = 'mimetype,size'
+
+    expect(fileOrError).toEqual(err)
+    expect(fileOrError).toHaveProperty('name', err.name)
+  })
 })
