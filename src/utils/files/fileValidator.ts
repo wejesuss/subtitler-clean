@@ -49,7 +49,7 @@ export class FileValidator {
     }
   }
 
-  verify (fileInfo: File): any {
+  verify (fileInfo: File): Error | File {
     this.errorFields = ''
     const { mimetype, size, path, destination, buffer } = fileInfo
 
@@ -62,6 +62,10 @@ export class FileValidator {
       const err = new Error('No valid file information provided')
       err.name = this.errorFields
       return err
+    }
+
+    return {
+      ...fileInfo
     }
   }
 }
