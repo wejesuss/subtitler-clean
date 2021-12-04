@@ -46,11 +46,12 @@ describe('FileValidator', () => {
   test('Should return the appropriate error name property', () => {
     const greaterThan1GigaByte = (1073741824 + 1)
     const incorrectMimetype = 'fse/mpeg'
+    const destinationFolder = path.resolve(__dirname, '..', 'public/files')
 
     const file = {
       mimetype: incorrectMimetype,
       size: greaterThan1GigaByte,
-      destination: path.resolve(__dirname),
+      destination: destinationFolder,
       filename: 'input.mp4',
       path: path.resolve(__dirname, 'input.mp4')
     }
@@ -58,7 +59,7 @@ describe('FileValidator', () => {
     const sut = new FileValidator()
     const fileOrError = sut.verify(file)
     const err = new Error('No valid file information provided')
-    err.name = 'mimetype,size,buffer'
+    err.name = 'mimetype,size,buffer,destination,path'
 
     expect(fileOrError).toEqual(err)
     expect(fileOrError).toHaveProperty('name', err.name)
@@ -79,6 +80,28 @@ describe('FileValidator', () => {
     const fileOrError = sut.verify(file)
     const err = new Error('No valid file information provided')
     err.name = 'buffer'
+
+    expect(fileOrError).toEqual(err)
+    expect(fileOrError).toHaveProperty('name', err.name)
+  })
+
+  test('Should return an error if path and destination does not match', () => {
+    const uploadsFolder = path.resolve(__dirname, '..', '..', '..', 'public/uploads')
+    const destinationFolder = path.resolve(__dirname, '..', '..', '..', 'public/files')
+
+    const file = {
+      mimetype: 'audio/mpeg3',
+      size: 1073741824,
+      destination: destinationFolder,
+      filename: 'input.mp3',
+      path: path.resolve(uploadsFolder, 'input.mp3'),
+      buffer: Buffer.from([])
+    }
+
+    const sut = new FileValidator()
+    const fileOrError = sut.verify(file)
+    const err = new Error('No valid file information provided')
+    err.name = 'destination,path'
 
     expect(fileOrError).toEqual(err)
     expect(fileOrError).toHaveProperty('name', err.name)
