@@ -1,4 +1,5 @@
 import fs from 'fs'
+import { dirname, isAbsolute } from 'path'
 
 interface File {
   mimetype: string
@@ -38,13 +39,24 @@ export class FileValidator {
     }
   }
 
+  private verifyDestination (path: string, destination: string): void {
+    const dirPath = dirname(path)
+    const dirDest = destination
+    const isPathAbsolute = isAbsolute(dirPath) && isAbsolute(dirDest)
+
+    if (!isPathAbsolute || dirDest !== dirPath) {
+      this.errorFields += this.errorFields ? ',destination,path' : 'destination,path'
+    }
+  }
+
   verify (fileInfo: File): any {
     this.errorFields = ''
-    const { mimetype, size, path, buffer } = fileInfo
+    const { mimetype, size, path, destination, buffer } = fileInfo
 
     this.verifyMimetype(mimetype)
     this.verifySize(size)
     this.verifyPath(path, buffer)
+    this.verifyDestination(path, destination)
 
     if (this.errorFields) {
       const err = new Error('No valid file information provided')
