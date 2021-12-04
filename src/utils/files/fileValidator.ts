@@ -1,3 +1,5 @@
+import fs from 'fs'
+
 interface File {
   mimetype: string
   size: number
@@ -28,12 +30,21 @@ export class FileValidator {
     }
   }
 
+  private verifyPath (path: string, buffer?: Buffer): void {
+    const exists = fs.existsSync(path)
+
+    if ((!exists && !Buffer.isBuffer(buffer))) {
+      this.errorFields += this.errorFields ? ',buffer' : 'buffer'
+    }
+  }
+
   verify (fileInfo: File): any {
     this.errorFields = ''
-    const { mimetype, size } = fileInfo
+    const { mimetype, size, path, buffer } = fileInfo
 
     this.verifyMimetype(mimetype)
     this.verifySize(size)
+    this.verifyPath(path, buffer)
 
     if (this.errorFields) {
       const err = new Error('No valid file information provided')
