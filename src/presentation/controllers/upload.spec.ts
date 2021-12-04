@@ -4,8 +4,7 @@ describe('Upload Controller', () => {
   test('Should return 400 if no language is provided', () => {
     const sut = new UploadController()
     const httpRequest = {
-      body: {},
-      file: {}
+      body: {}
     }
 
     const httpResponse = sut.handle(httpRequest)
@@ -18,8 +17,7 @@ describe('Upload Controller', () => {
     const httpRequest = {
       body: {
         language: 'dggd'
-      },
-      file: {}
+      }
     }
 
     const httpResponse = sut.handle(httpRequest)
