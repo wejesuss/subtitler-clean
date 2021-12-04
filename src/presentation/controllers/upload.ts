@@ -1,3 +1,4 @@
+import { FileValidator } from '../../utils/files/fileValidator'
 import { GetLanguages } from '../../utils/languages/getLanguages'
 
 interface HttpRequest {
@@ -38,6 +39,15 @@ export class UploadController {
       return {
         statusCode: 400,
         body: new Error('No file information provided')
+      }
+    }
+
+    const fileValidator = new FileValidator()
+    const fileOrError = fileValidator.verify(file)
+    if (fileOrError instanceof Error) {
+      return {
+        statusCode: 400,
+        body: fileOrError
       }
     }
   }
