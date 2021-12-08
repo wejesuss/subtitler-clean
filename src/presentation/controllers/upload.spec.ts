@@ -1,4 +1,5 @@
 import path from 'path'
+import { MissingParamError } from '../errors/missing-param-error'
 import { UploadController } from './upload'
 
 describe('Upload Controller', () => {
@@ -10,7 +11,7 @@ describe('Upload Controller', () => {
 
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new Error('No language provided'))
+    expect(httpResponse.body).toEqual(new MissingParamError('language'))
   })
 
   test('Should return 400 if no valid language is provided', () => {
@@ -36,7 +37,7 @@ describe('Upload Controller', () => {
 
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new Error('No file information provided'))
+    expect(httpResponse.body).toEqual(new MissingParamError('file'))
   })
 
   test('Should return 400 if no valid file is provided', () => {

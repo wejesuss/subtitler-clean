@@ -1,6 +1,7 @@
 import { FileValidator } from '../../utils/files/fileValidator'
 import { GetLanguages } from '../../utils/languages/getLanguages'
 import { HttpRequest, HttpResponse } from '../protocols/http'
+import { MissingParamError } from '../errors/missing-param-error'
 
 export class UploadController {
   handle (httpRequest: HttpRequest): HttpResponse {
@@ -9,7 +10,7 @@ export class UploadController {
     if (!body.language) {
       return {
         statusCode: 400,
-        body: new Error('No language provided')
+        body: new MissingParamError('language')
       }
     }
 
@@ -25,7 +26,7 @@ export class UploadController {
     if (!file) {
       return {
         statusCode: 400,
-        body: new Error('No file information provided')
+        body: new MissingParamError('file')
       }
     }
 
