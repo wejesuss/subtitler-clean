@@ -10,22 +10,22 @@ export class UploadController {
 
     if (!body.language) {
       return badRequest(new MissingParamError('language'))
-    }
-
-    const getLanguages = new GetLanguages()
-    const nameOrError = getLanguages.verify(body.language)
-    if (nameOrError instanceof Error) {
-      return badRequest(new Error('No valid language provided'))
+    } else {
+      const getLanguages = new GetLanguages()
+      const nameOrError = getLanguages.verify(body.language)
+      if (nameOrError instanceof Error) {
+        return badRequest(new Error('No valid language provided'))
+      }
     }
 
     if (!file) {
       return badRequest(new MissingParamError('file'))
-    }
-
-    const fileValidator = new FileValidator()
-    const fileOrError = fileValidator.verify(file)
-    if (fileOrError instanceof Error) {
-      return badRequest(fileOrError)
+    } else {
+      const fileValidator = new FileValidator()
+      const fileOrError = fileValidator.verify(file)
+      if (fileOrError instanceof Error) {
+        return badRequest(fileOrError)
+      }
     }
 
     return {
