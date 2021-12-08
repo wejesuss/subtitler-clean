@@ -3,8 +3,9 @@ import { GetLanguages } from '../../utils/languages/getLanguages'
 import { HttpRequest, HttpResponse } from '../protocols/http'
 import { MissingParamError } from '../errors/missing-param-error'
 import { badRequest } from '../helpers/http-helper'
+import { Controller } from '../protocols/controller'
 
-export class UploadController {
+export class UploadController implements Controller {
   handle (httpRequest: HttpRequest): HttpResponse {
     const { body, file } = httpRequest
 
