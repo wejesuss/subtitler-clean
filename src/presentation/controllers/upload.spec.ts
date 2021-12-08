@@ -1,14 +1,33 @@
 import path from 'path'
+import { InvalidParamError } from '../errors/invalid-param-error'
 import { MissingParamError } from '../errors/missing-param-error'
+import { LanguageValidator } from '../protocols/language-validator'
 import { UploadController } from './upload'
 
-const makeSut = (): UploadController => {
-  return new UploadController()
+interface SutTypes {
+  sut: UploadController
+  languageValidatorStub: LanguageValidator
+}
+
+const makeSut = (): SutTypes => {
+  class LanguageValidatorStub implements LanguageValidator {
+    isValid (language: string): boolean {
+      return true
+    }
+  }
+
+  const languageValidatorStub = new LanguageValidatorStub()
+  const sut = new UploadController(languageValidatorStub)
+
+  return {
+    sut,
+    languageValidatorStub
+  }
 }
 
 describe('Upload Controller', () => {
   test('Should return 400 if no language is provided', () => {
-    const sut = makeSut()
+    const { sut } = makeSut()
     const httpRequest = {
       body: {}
     }
@@ -19,20 +38,22 @@ describe('Upload Controller', () => {
   })
 
   test('Should return 400 if no valid language is provided', () => {
-    const sut = makeSut()
+    const { sut, languageValidatorStub } = makeSut()
+    jest.spyOn(languageValidatorStub, 'isValid').mockReturnValueOnce(false)
+
     const httpRequest = {
       body: {
-        language: 'dggd'
+        language: 'invalid_language'
       }
     }
 
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new Error('No valid language provided'))
+    expect(httpResponse.body).toEqual(new InvalidParamError('language'))
   })
 
   test('Should return 400 if no file is provided', () => {
-    const sut = makeSut()
+    const { sut } = makeSut()
     const httpRequest = {
       body: {
         language: 'en'
@@ -45,7 +66,8 @@ describe('Upload Controller', () => {
   })
 
   test('Should return 400 if no valid file is provided', () => {
-    const sut = makeSut()
+    const { sut } = makeSut()
+
     const httpRequest = {
       body: {
         language: 'en'
@@ -69,7 +91,7 @@ describe('Upload Controller', () => {
   })
 
   test('Should return 200 if everything is fine', () => {
-    const sut = makeSut()
+    const { sut } = makeSut()
     const httpRequest = {
       body: {
         language: 'en'
