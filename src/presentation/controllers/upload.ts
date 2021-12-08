@@ -50,5 +50,9 @@ export class UploadController {
         body: fileOrError
       }
     }
+
+    return {
+      statusCode: 200
+    }
   }
 }
