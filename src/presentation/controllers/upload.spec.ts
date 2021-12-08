@@ -1,3 +1,4 @@
+import path from 'path'
 import { UploadController } from './upload'
 
 describe('Upload Controller', () => {
@@ -60,5 +61,26 @@ describe('Upload Controller', () => {
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(err)
     expect(httpResponse.body).toHaveProperty('name', err.name)
+  })
+
+  test('Should return 200 if everything is fine', () => {
+    const sut = new UploadController()
+    const httpRequest = {
+      body: {
+        language: 'en'
+      },
+      file: {
+        mimetype: 'video/mp4',
+        size: 1073741824,
+        destination: path.resolve(__dirname),
+        filename: 'input.mp4',
+        path: path.resolve(__dirname, 'input.mp4'),
+        buffer: Buffer.from('')
+      }
+    }
+
+    const httpResponse = sut.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(200)
   })
 })
