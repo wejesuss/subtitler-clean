@@ -1,22 +1,9 @@
 import { FileValidator } from '../../utils/files/fileValidator'
 import { GetLanguages } from '../../utils/languages/getLanguages'
-
-interface HttpRequest {
-  body: {
-    language?: string
-  }
-  file?: {
-    mimetype: string
-    size: number
-    destination: string
-    filename: string
-    path: string
-    buffer?: Buffer
-  }
-}
+import { HttpRequest, HttpResponse } from '../protocols/http'
 
 export class UploadController {
-  handle (httpRequest: HttpRequest): any {
+  handle (httpRequest: HttpRequest): HttpResponse {
     const { body, file } = httpRequest
 
     if (!body.language) {
