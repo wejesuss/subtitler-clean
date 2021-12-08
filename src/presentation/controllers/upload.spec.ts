@@ -2,9 +2,13 @@ import path from 'path'
 import { MissingParamError } from '../errors/missing-param-error'
 import { UploadController } from './upload'
 
+const makeSut = (): UploadController => {
+  return new UploadController()
+}
+
 describe('Upload Controller', () => {
   test('Should return 400 if no language is provided', () => {
-    const sut = new UploadController()
+    const sut = makeSut()
     const httpRequest = {
       body: {}
     }
@@ -15,7 +19,7 @@ describe('Upload Controller', () => {
   })
 
   test('Should return 400 if no valid language is provided', () => {
-    const sut = new UploadController()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         language: 'dggd'
@@ -28,7 +32,7 @@ describe('Upload Controller', () => {
   })
 
   test('Should return 400 if no file is provided', () => {
-    const sut = new UploadController()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         language: 'en'
@@ -41,7 +45,7 @@ describe('Upload Controller', () => {
   })
 
   test('Should return 400 if no valid file is provided', () => {
-    const sut = new UploadController()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         language: 'en'
@@ -65,7 +69,7 @@ describe('Upload Controller', () => {
   })
 
   test('Should return 200 if everything is fine', () => {
-    const sut = new UploadController()
+    const sut = makeSut()
     const httpRequest = {
       body: {
         language: 'en'
