@@ -1,6 +1,7 @@
 import path from 'path'
 import { InvalidParamError } from '../errors/invalid-param-error'
 import { MissingParamError } from '../errors/missing-param-error'
+import { ServerError } from '../errors/server-error'
 import { File } from '../protocols/file'
 import { FileValidator } from '../protocols/file-validator'
 import { LanguageValidator } from '../protocols/language-validator'
@@ -69,6 +70,23 @@ describe('Upload Controller', () => {
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('language'))
+  })
+
+  test('Should return 500 if LanguageValidator throws', () => {
+    const { sut, languageValidatorStub } = makeSut()
+    jest.spyOn(languageValidatorStub, 'isValid').mockImplementationOnce((language: string) => {
+      throw new Error()
+    })
+
+    const httpRequest = {
+      body: {
+        language: 'any_language'
+      }
+    }
+
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
   })
 
   test('Should call LanguageValidator with correct language', () => {
