@@ -1,7 +1,6 @@
 import fs from 'fs'
 import { dirname, isAbsolute } from 'path'
-import { File } from '../../presentation/protocols/file'
-import { FileValidator } from '../../presentation/protocols/file-validator'
+import { File, FileValidator } from '../../presentation/protocols/file-validator'
 
 export class FileValidatorVanilla implements FileValidator {
   private isFieldValid = true

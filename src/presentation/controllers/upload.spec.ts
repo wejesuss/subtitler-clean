@@ -1,7 +1,6 @@
 import path from 'path'
 import { InvalidParamError, MissingParamError, ServerError } from '../errors'
-import { File } from '../protocols/file'
-import { FileValidator } from '../protocols/file-validator'
+import { FileValidator, File } from '../protocols/file-validator'
 import { LanguageValidator } from '../protocols/language-validator'
 import { UploadController } from './upload'
 
