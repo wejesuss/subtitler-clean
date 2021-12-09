@@ -1,25 +1,18 @@
 import fs from 'fs'
 import { dirname, isAbsolute } from 'path'
+import { File } from '../../presentation/protocols/file'
+import { FileValidator } from '../../presentation/protocols/file-validator'
 
-interface File {
-  mimetype: string
-  size: number
-  destination: string
-  filename: string
-  path: string
-  buffer?: Buffer
-}
-
-export class FileValidator {
-  private errorFields = ''
-  private readonly mimetypeRegEx = /(audio|video)\/([0-9A-Za-z-_]+)/g
+export class FileValidatorVanilla implements FileValidator {
+  private isFieldValid = true
+  private readonly mimetypeRegExp = /(audio|video)\/([0-9A-Za-z-_]+)/g
   private readonly oneGigaByteLimit = 1073741824
 
   private verifyMimetype (mimetype: string): void {
-    const isMimetypeValid = this.mimetypeRegEx.test(mimetype)
+    const isMimetypeValid = this.mimetypeRegExp.test(mimetype)
 
     if (!isMimetypeValid) {
-      this.errorFields += 'mimetype'
+      this.isFieldValid = false
     }
   }
 
@@ -27,7 +20,7 @@ export class FileValidator {
     const limit = this.oneGigaByteLimit
 
     if (size > limit) {
-      this.errorFields += this.errorFields ? ',size' : 'size'
+      this.isFieldValid = false
     }
   }
 
@@ -35,7 +28,7 @@ export class FileValidator {
     const exists = fs.existsSync(path)
 
     if ((!exists && !Buffer.isBuffer(buffer))) {
-      this.errorFields += this.errorFields ? ',buffer' : 'buffer'
+      this.isFieldValid = false
     }
   }
 
@@ -45,27 +38,29 @@ export class FileValidator {
     const isPathAbsolute = isAbsolute(dirPath) && isAbsolute(dirDest)
 
     if (!isPathAbsolute || dirDest !== dirPath) {
-      this.errorFields += this.errorFields ? ',destination,path' : 'destination,path'
+      this.isFieldValid = false
     }
   }
 
-  verify (fileInfo: File): Error | File {
-    this.errorFields = ''
-    const { mimetype, size, path, destination, buffer } = fileInfo
+  isValid (fileInfo: File): boolean {
+    this.isFieldValid = true
+    const {
+      mimetype,
+      size,
+      path,
+      destination,
+      buffer
+    } = fileInfo
 
     this.verifyMimetype(mimetype)
     this.verifySize(size)
     this.verifyPath(path, buffer)
     this.verifyDestination(path, destination)
 
-    if (this.errorFields) {
-      const err = new Error('No valid file information provided')
-      err.name = this.errorFields
-      return err
+    if (!this.isFieldValid) {
+      return false
     }
 
-    return {
-      ...fileInfo
-    }
+    return true
   }
 }
