@@ -120,6 +120,27 @@ describe('Upload Controller', () => {
     expect(httpResponse.body).toEqual(new InvalidParamError('file'))
   })
 
+  test('Should call FileValidator with correct file info', () => {
+    const { sut, fileValidatorStub } = makeSut()
+    const isValidSpy = jest.spyOn(fileValidatorStub, 'isValid')
+
+    const httpRequest = {
+      body: {
+        language: 'en'
+      },
+      file: {
+        mimetype: 'any_mimetype',
+        size: (1073741824 + 1),
+        destination: 'any_destination',
+        filename: 'any_filename',
+        path: 'any_path'
+      }
+    }
+
+    sut.handle(httpRequest)
+    expect(isValidSpy).toHaveBeenCalledWith(httpRequest.file)
+  })
+
   test('Should return 200 if everything is fine', () => {
     const { sut } = makeSut()
     const httpRequest = {
