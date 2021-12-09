@@ -1,8 +1,7 @@
 import { HttpRequest, HttpResponse } from '../protocols/http'
-import { MissingParamError } from '../errors/missing-param-error'
+import { MissingParamError, InvalidParamError } from '../errors'
 import { badRequest, internalServerError, ok } from '../helpers/http-helper'
 import { Controller } from '../protocols/controller'
-import { InvalidParamError } from '../errors/invalid-param-error'
 import { LanguageValidator } from '../protocols/language-validator'
 import { FileValidator } from '../protocols/file-validator'
 

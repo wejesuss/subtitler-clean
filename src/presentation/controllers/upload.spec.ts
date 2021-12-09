@@ -1,7 +1,5 @@
 import path from 'path'
-import { InvalidParamError } from '../errors/invalid-param-error'
-import { MissingParamError } from '../errors/missing-param-error'
-import { ServerError } from '../errors/server-error'
+import { InvalidParamError, MissingParamError, ServerError } from '../errors'
 import { File } from '../protocols/file'
 import { FileValidator } from '../protocols/file-validator'
 import { LanguageValidator } from '../protocols/language-validator'
