@@ -71,6 +71,20 @@ describe('Upload Controller', () => {
     expect(httpResponse.body).toEqual(new InvalidParamError('language'))
   })
 
+  test('Should call LanguageValidator with correct language', () => {
+    const { sut, languageValidatorStub } = makeSut()
+    const isValidSpy = jest.spyOn(languageValidatorStub, 'isValid')
+
+    const httpRequest = {
+      body: {
+        language: 'any_language'
+      }
+    }
+
+    sut.handle(httpRequest)
+    expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.language)
+  })
+
   test('Should return 400 if no file is provided', () => {
     const { sut } = makeSut()
     const httpRequest = {
