@@ -1,10 +1,10 @@
 import {
   HttpRequest,
   HttpResponse,
-  Controller,
-  LanguageValidator,
-  FileValidator
+  Controller
 } from '../protocols'
+import { FileValidator } from '../protocols/file-validator'
+import { LanguageValidator } from '../protocols/language-validator'
 import {
   MissingParamError,
   InvalidParamError
