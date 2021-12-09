@@ -1,16 +1,19 @@
-import { FileValidator } from '../../utils/files/fileValidator'
+
 import { HttpRequest, HttpResponse } from '../protocols/http'
 import { MissingParamError } from '../errors/missing-param-error'
 import { badRequest } from '../helpers/http-helper'
 import { Controller } from '../protocols/controller'
 import { InvalidParamError } from '../errors/invalid-param-error'
 import { LanguageValidator } from '../protocols/language-validator'
+import { FileValidator } from '../protocols/file-validator'
 
 export class UploadController implements Controller {
   private readonly languageValidator: LanguageValidator
+  private readonly fileValidator: FileValidator
 
-  constructor (languageValidator: LanguageValidator) {
+  constructor (languageValidator: LanguageValidator, fileValidator: FileValidator) {
     this.languageValidator = languageValidator
+    this.fileValidator = fileValidator
   }
 
   handle (httpRequest: HttpRequest): HttpResponse {
@@ -27,12 +30,11 @@ export class UploadController implements Controller {
 
     if (!file) {
       return badRequest(new MissingParamError('file'))
-    } else {
-      const fileValidator = new FileValidator()
-      const fileOrError = fileValidator.verify(file)
-      if (fileOrError instanceof Error) {
-        return badRequest(fileOrError)
-      }
+    }
+
+    const isFileValid = this.fileValidator.isValid(file)
+    if (!isFileValid) {
+      return badRequest(new InvalidParamError('file'))
     }
 
     return {

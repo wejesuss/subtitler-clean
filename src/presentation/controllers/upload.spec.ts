@@ -1,27 +1,46 @@
 import path from 'path'
 import { InvalidParamError } from '../errors/invalid-param-error'
 import { MissingParamError } from '../errors/missing-param-error'
+import { File } from '../protocols/file'
+import { FileValidator } from '../protocols/file-validator'
 import { LanguageValidator } from '../protocols/language-validator'
 import { UploadController } from './upload'
 
-interface SutTypes {
-  sut: UploadController
-  languageValidatorStub: LanguageValidator
-}
-
-const makeSut = (): SutTypes => {
+const makeLanguageValidator = (): LanguageValidator => {
   class LanguageValidatorStub implements LanguageValidator {
     isValid (language: string): boolean {
       return true
     }
   }
 
-  const languageValidatorStub = new LanguageValidatorStub()
-  const sut = new UploadController(languageValidatorStub)
+  return new LanguageValidatorStub()
+}
+
+const makeFileValidator = (): FileValidator => {
+  class FileValidatorStub implements FileValidator {
+    isValid (file: File): boolean {
+      return true
+    }
+  }
+
+  return new FileValidatorStub()
+}
+
+interface SutTypes {
+  sut: UploadController
+  languageValidatorStub: LanguageValidator
+  fileValidatorStub: FileValidator
+}
+
+const makeSut = (): SutTypes => {
+  const languageValidatorStub = makeLanguageValidator()
+  const fileValidatorStub = makeFileValidator()
+  const sut = new UploadController(languageValidatorStub, fileValidatorStub)
 
   return {
     sut,
-    languageValidatorStub
+    languageValidatorStub,
+    fileValidatorStub
   }
 }
 
@@ -66,28 +85,25 @@ describe('Upload Controller', () => {
   })
 
   test('Should return 400 if no valid file is provided', () => {
-    const { sut } = makeSut()
+    const { sut, fileValidatorStub } = makeSut()
+    jest.spyOn(fileValidatorStub, 'isValid').mockReturnValueOnce(false)
 
     const httpRequest = {
       body: {
         language: 'en'
       },
       file: {
-        mimetype: 'image/jpg',
+        mimetype: 'invalid_mimetype',
         size: (1073741824 + 1),
-        destination: 'public/uploads',
-        filename: 'input.jpg',
-        path: '/subtitler-clean/public/uploads/input.jpg'
+        destination: 'invalid_destination',
+        filename: 'invalid_filename',
+        path: 'invalid_path'
       }
     }
 
     const httpResponse = sut.handle(httpRequest)
-    const err = new Error('No valid file information provided')
-    err.name = 'mimetype,size,buffer,destination,path'
-
     expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(err)
-    expect(httpResponse.body).toHaveProperty('name', err.name)
+    expect(httpResponse.body).toEqual(new InvalidParamError('file'))
   })
 
   test('Should return 200 if everything is fine', () => {

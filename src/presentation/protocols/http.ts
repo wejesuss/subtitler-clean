@@ -1,13 +1,8 @@
+import { File } from './file'
+
 export interface HttpRequest {
   body?: any
-  file?: {
-    mimetype: string
-    size: number
-    destination: string
-    filename: string
-    path: string
-    buffer?: Buffer
-  }
+  file?: File
 }
 
 export interface HttpResponse {
