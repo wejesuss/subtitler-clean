@@ -1,6 +1,6 @@
 import { HttpRequest, HttpResponse } from '../protocols/http'
 import { MissingParamError } from '../errors/missing-param-error'
-import { badRequest } from '../helpers/http-helper'
+import { badRequest, ok } from '../helpers/http-helper'
 import { Controller } from '../protocols/controller'
 import { InvalidParamError } from '../errors/invalid-param-error'
 import { LanguageValidator } from '../protocols/language-validator'
@@ -36,8 +36,6 @@ export class UploadController implements Controller {
       return badRequest(new InvalidParamError('file'))
     }
 
-    return {
-      statusCode: 200
-    }
+    return ok()
   }
 }
