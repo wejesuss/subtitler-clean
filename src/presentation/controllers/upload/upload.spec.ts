@@ -1,7 +1,6 @@
 import path from 'path'
-import { InvalidParamError, MissingParamError, ServerError } from '../errors'
-import { FileValidator, File } from '../protocols/file-validator'
-import { LanguageValidator } from '../protocols/language-validator'
+import { InvalidParamError, MissingParamError, ServerError } from '../../errors'
+import { FileValidator, File, LanguageValidator } from './upload-protocols'
 import { UploadController } from './upload'
 
 const makeLanguageValidator = (): LanguageValidator => {

@@ -1,15 +1,12 @@
 import {
   HttpRequest,
   HttpResponse,
-  Controller
-} from '../protocols'
-import { FileValidator } from '../protocols/file-validator'
-import { LanguageValidator } from '../protocols/language-validator'
-import {
-  MissingParamError,
-  InvalidParamError
-} from '../errors'
-import { badRequest, internalServerError, ok } from '../helpers/http-helper'
+  Controller,
+  FileValidator,
+  LanguageValidator
+} from './upload-protocols'
+import { MissingParamError, InvalidParamError } from '../../errors'
+import { badRequest, internalServerError, ok } from '../../helpers/http-helper'
 
 export class UploadController implements Controller {
   private readonly languageValidator: LanguageValidator
