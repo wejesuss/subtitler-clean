@@ -3,7 +3,8 @@ import {
   HttpResponse,
   Controller,
   FileValidator,
-  LanguageValidator
+  LanguageValidator,
+  AddFile
 } from './upload-protocols'
 import { MissingParamError, InvalidParamError } from '../../errors'
 import { badRequest, internalServerError, ok } from '../../helpers/http-helper'
@@ -11,10 +12,12 @@ import { badRequest, internalServerError, ok } from '../../helpers/http-helper'
 export class UploadController implements Controller {
   private readonly languageValidator: LanguageValidator
   private readonly fileValidator: FileValidator
+  private readonly addFile: AddFile
 
-  constructor (languageValidator: LanguageValidator, fileValidator: FileValidator) {
+  constructor (languageValidator: LanguageValidator, fileValidator: FileValidator, addFile: AddFile) {
     this.languageValidator = languageValidator
     this.fileValidator = fileValidator
+    this.addFile = addFile
   }
 
   handle (httpRequest: HttpRequest): HttpResponse {
@@ -39,7 +42,13 @@ export class UploadController implements Controller {
         return badRequest(new InvalidParamError('file'))
       }
 
-      return ok()
+      const fileModel = this.addFile.add({
+        filename: file.filename,
+        path: file.path,
+        size: file.size
+      })
+
+      return ok(fileModel)
     } catch (error) {
       console.error(error)
       return internalServerError()
