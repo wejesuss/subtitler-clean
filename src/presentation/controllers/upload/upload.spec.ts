@@ -1,6 +1,19 @@
 import path from 'path'
-import { InvalidParamError, MissingParamError, ServerError } from '../../errors'
-import { FileValidator, File, LanguageValidator, AddFile, AddFileModel, FileModel } from './upload-protocols'
+import {
+  InvalidParamError,
+  MissingParamError,
+  ServerError
+} from '../../errors'
+import {
+  FileValidator,
+  File,
+  LanguageValidator,
+  AddFile,
+  AddFileModel,
+  FileModel,
+  CreateFile,
+  CreateFileModel
+} from './upload-protocols'
 import { UploadController } from './upload'
 
 const makeLanguageValidator = (): LanguageValidator => {
@@ -23,6 +36,16 @@ const makeFileValidator = (): FileValidator => {
   return new FileValidatorStub()
 }
 
+const makeCreateFile = (): CreateFile => {
+  class CreateFileStub implements CreateFile {
+    create (file: CreateFileModel): boolean {
+      return true
+    }
+  }
+
+  return new CreateFileStub()
+}
+
 const makeAddFile = (): AddFile => {
   class AddFileStub implements AddFile {
     add (file: AddFileModel): FileModel {
@@ -42,19 +65,22 @@ interface SutTypes {
   sut: UploadController
   languageValidatorStub: LanguageValidator
   fileValidatorStub: FileValidator
+  createFileStub: CreateFile
   addFileStub: AddFile
 }
 
 const makeSut = (): SutTypes => {
   const languageValidatorStub = makeLanguageValidator()
   const fileValidatorStub = makeFileValidator()
+  const createFileStub = makeCreateFile()
   const addFileStub = makeAddFile()
-  const sut = new UploadController(languageValidatorStub, fileValidatorStub, addFileStub)
+  const sut = new UploadController(languageValidatorStub, fileValidatorStub, createFileStub, addFileStub)
 
   return {
     sut,
     languageValidatorStub,
     fileValidatorStub,
+    createFileStub,
     addFileStub
   }
 }
@@ -195,6 +221,33 @@ describe('Upload Controller', () => {
 
     sut.handle(httpRequest)
     expect(isValidSpy).toHaveBeenCalledWith(httpRequest.file)
+  })
+
+  test('Should call CreateFile with correct values', () => {
+    const { sut, createFileStub } = makeSut()
+    const createFileSpy = jest.spyOn(createFileStub, 'create')
+    const httpRequest = {
+      body: {
+        language: 'en'
+      },
+      file: {
+        mimetype: 'video/mp4',
+        size: 1073741824,
+        destination: path.resolve(__dirname),
+        filename: 'input.mp4',
+        path: path.resolve(__dirname, 'input.mp4'),
+        buffer: Buffer.from([0x62, 0x75, 0x66, 0x66, 0x65, 0x72])
+      }
+    }
+
+    sut.handle(httpRequest)
+    expect(createFileSpy).toHaveBeenCalledWith({
+      mimetype: 'video/mp4',
+      filename: 'input.mp4',
+      path: path.resolve(__dirname, 'input.mp4'),
+      size: 1073741824,
+      buffer: Buffer.from([0x62, 0x75, 0x66, 0x66, 0x65, 0x72])
+    })
   })
 
   test('Should call AddFile with correct values', () => {
