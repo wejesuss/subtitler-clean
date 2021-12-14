@@ -1,20 +1,29 @@
-import path from 'path'
 import { FileValidatorAdapter } from './file-validator-adapter'
+
+interface SutTypes {
+  sut: FileValidatorAdapter
+}
+
+const makeSut = (): SutTypes => {
+  const sut = new FileValidatorAdapter()
+  jest.spyOn(sut, 'isValid').mockReturnValue(true)
+
+  return {
+    sut
+  }
+}
 
 describe('File Validator', () => {
   test('Should return false if an invalid file info is provided', () => {
-    const greaterThan1GigaByte = (1073741824 + 1)
-    const incorrectMimetype = 'fse/mpeg'
-    const destinationFolder = path.resolve(__dirname, '..', 'public/files')
-
-    const sut = new FileValidatorAdapter()
+    const { sut } = makeSut()
+    jest.spyOn(sut, 'isValid').mockReturnValue(false)
 
     const file = {
-      mimetype: incorrectMimetype,
-      size: greaterThan1GigaByte,
-      destination: destinationFolder,
-      filename: 'input.mp4',
-      path: path.resolve(__dirname, 'input.mp4')
+      mimetype: 'invalid_mimetype',
+      size: (1073741824 + 1),
+      destination: 'invalid_destination',
+      filename: 'invalid_filename',
+      path: 'invalid_path'
     }
 
     const isValid = sut.isValid(file)
@@ -23,15 +32,15 @@ describe('File Validator', () => {
   })
 
   test('Should return true if nothing is wrong', () => {
-    const sut = new FileValidatorAdapter()
+    const { sut } = makeSut()
 
     const file = {
-      mimetype: 'audio/mpeg3',
+      mimetype: 'valid_mimetype',
       size: 1073741824,
-      destination: path.resolve(__dirname),
-      filename: 'input.mp3',
-      path: path.resolve(__dirname, 'input.mp3'),
-      buffer: Buffer.from([109, 112, 51])
+      destination: 'valid_destination',
+      filename: 'valid_filename',
+      path: 'valid_path',
+      buffer: Buffer.from('valid')
     }
 
     const isValid = sut.isValid(file)
@@ -40,16 +49,16 @@ describe('File Validator', () => {
   })
 
   test('Should have been called with correct file info', () => {
-    const sut = new FileValidatorAdapter()
+    const { sut } = makeSut()
     const isValidSpy = jest.spyOn(sut, 'isValid')
 
     const file = {
-      mimetype: 'audio/mpeg3',
+      mimetype: 'any_mimetype',
       size: 1073741824,
-      destination: path.resolve(__dirname),
-      filename: 'input.mp3',
-      path: path.resolve(__dirname, 'input.mp3'),
-      buffer: Buffer.from([109, 112, 51])
+      destination: 'any_destination',
+      filename: 'any_filename',
+      path: 'any_path',
+      buffer: Buffer.from('any')
     }
 
     sut.isValid(file)
