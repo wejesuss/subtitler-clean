@@ -7,5 +7,5 @@ export interface CreateFileModel {
 }
 
 export interface CreateFile {
-  create: (file: CreateFileModel) => boolean
+  create: (file: CreateFileModel) => Promise<boolean>
 }

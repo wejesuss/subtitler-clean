@@ -7,5 +7,5 @@ export interface AddFileModel {
 }
 
 export interface AddFile {
-  add: (file: AddFileModel) => FileModel
+  add: (file: AddFileModel) => Promise<FileModel>
 }

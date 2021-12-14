@@ -31,7 +31,7 @@ export class UploadController implements Controller {
     this.addFile = addFile
   }
 
-  handle (httpRequest: HttpRequest): HttpResponse {
+  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const { body, file } = httpRequest
 
@@ -53,7 +53,7 @@ export class UploadController implements Controller {
         return badRequest(new InvalidParamError('file'))
       }
 
-      this.createFile.create({
+      await this.createFile.create({
         mimetype: file.mimetype,
         filename: file.filename,
         path: file.path,
@@ -61,7 +61,7 @@ export class UploadController implements Controller {
         buffer: file.buffer ?? Buffer.from('')
       })
 
-      const fileModel = this.addFile.add({
+      const fileModel = await this.addFile.add({
         filename: file.filename,
         path: file.path,
         size: file.size

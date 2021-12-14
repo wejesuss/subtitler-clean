@@ -38,8 +38,8 @@ const makeFileValidator = (): FileValidator => {
 
 const makeCreateFile = (): CreateFile => {
   class CreateFileStub implements CreateFile {
-    create (file: CreateFileModel): boolean {
-      return true
+    async create (file: CreateFileModel): Promise<boolean> {
+      return await Promise.resolve(true)
     }
   }
 
@@ -48,13 +48,13 @@ const makeCreateFile = (): CreateFile => {
 
 const makeAddFile = (): AddFile => {
   class AddFileStub implements AddFile {
-    add (file: AddFileModel): FileModel {
-      return {
+    async add (file: AddFileModel): Promise<FileModel> {
+      return await new Promise(resolve => resolve({
         id: 'valid_id',
         filename: 'valid_filename',
         path: 'valid_path',
         size: 1073741824
-      }
+      }))
     }
   }
 
@@ -86,18 +86,18 @@ const makeSut = (): SutTypes => {
 }
 
 describe('Upload Controller', () => {
-  test('Should return 400 if no language is provided', () => {
+  test('Should return 400 if no language is provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {}
     }
 
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('language'))
   })
 
-  test('Should return 400 if no valid language is provided', () => {
+  test('Should return 400 if no valid language is provided', async () => {
     const { sut, languageValidatorStub } = makeSut()
     jest.spyOn(languageValidatorStub, 'isValid').mockReturnValueOnce(false)
 
@@ -107,12 +107,12 @@ describe('Upload Controller', () => {
       }
     }
 
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('language'))
   })
 
-  test('Should return 500 if LanguageValidator throws', () => {
+  test('Should return 500 if LanguageValidator throws', async () => {
     const { sut, languageValidatorStub } = makeSut()
     jest.spyOn(languageValidatorStub, 'isValid').mockImplementationOnce((language: string) => {
       throw new Error()
@@ -124,12 +124,12 @@ describe('Upload Controller', () => {
       }
     }
 
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  test('Should call LanguageValidator with correct language', () => {
+  test('Should call LanguageValidator with correct language', async () => {
     const { sut, languageValidatorStub } = makeSut()
     const isValidSpy = jest.spyOn(languageValidatorStub, 'isValid')
 
@@ -139,11 +139,11 @@ describe('Upload Controller', () => {
       }
     }
 
-    sut.handle(httpRequest)
+    await sut.handle(httpRequest)
     expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.language)
   })
 
-  test('Should return 400 if no file is provided', () => {
+  test('Should return 400 if no file is provided', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
@@ -151,12 +151,12 @@ describe('Upload Controller', () => {
       }
     }
 
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new MissingParamError('file'))
   })
 
-  test('Should return 400 if no valid file is provided', () => {
+  test('Should return 400 if no valid file is provided', async () => {
     const { sut, fileValidatorStub } = makeSut()
     jest.spyOn(fileValidatorStub, 'isValid').mockReturnValueOnce(false)
 
@@ -173,12 +173,12 @@ describe('Upload Controller', () => {
       }
     }
 
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('file'))
   })
 
-  test('Should return 500 if FileValidator throws', () => {
+  test('Should return 500 if FileValidator throws', async () => {
     const { sut, fileValidatorStub } = makeSut()
     jest.spyOn(fileValidatorStub, 'isValid').mockImplementationOnce((file: File) => {
       throw new Error()
@@ -197,12 +197,12 @@ describe('Upload Controller', () => {
       }
     }
 
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  test('Should call FileValidator with correct file info', () => {
+  test('Should call FileValidator with correct file info', async () => {
     const { sut, fileValidatorStub } = makeSut()
     const isValidSpy = jest.spyOn(fileValidatorStub, 'isValid')
 
@@ -219,11 +219,11 @@ describe('Upload Controller', () => {
       }
     }
 
-    sut.handle(httpRequest)
+    await sut.handle(httpRequest)
     expect(isValidSpy).toHaveBeenCalledWith(httpRequest.file)
   })
 
-  test('Should call CreateFile with correct values', () => {
+  test('Should call CreateFile with correct values', async () => {
     const { sut, createFileStub } = makeSut()
     const createFileSpy = jest.spyOn(createFileStub, 'create')
     const httpRequest = {
@@ -240,7 +240,7 @@ describe('Upload Controller', () => {
       }
     }
 
-    sut.handle(httpRequest)
+    await sut.handle(httpRequest)
     expect(createFileSpy).toHaveBeenCalledWith({
       mimetype: 'video/mp4',
       filename: 'input.mp4',
@@ -250,7 +250,7 @@ describe('Upload Controller', () => {
     })
   })
 
-  test('Should call AddFile with correct values', () => {
+  test('Should call AddFile with correct values', async () => {
     const { sut, addFileStub } = makeSut()
     const addFileSpy = jest.spyOn(addFileStub, 'add')
     const httpRequest = {
@@ -267,7 +267,7 @@ describe('Upload Controller', () => {
       }
     }
 
-    sut.handle(httpRequest)
+    await sut.handle(httpRequest)
     expect(addFileSpy).toHaveBeenCalledWith({
       filename: 'input.mp4',
       path: path.resolve(__dirname, 'input.mp4'),
@@ -275,10 +275,10 @@ describe('Upload Controller', () => {
     })
   })
 
-  test('Should return 500 if CreateFile throws', () => {
+  test('Should return 500 if CreateFile throws', async () => {
     const { sut, createFileStub } = makeSut()
-    jest.spyOn(createFileStub, 'create').mockImplementationOnce((file: CreateFileModel) => {
-      throw new Error()
+    jest.spyOn(createFileStub, 'create').mockImplementationOnce(async (file: CreateFileModel) => {
+      return await Promise.reject(new Error())
     })
 
     const httpRequest = {
@@ -294,15 +294,15 @@ describe('Upload Controller', () => {
       }
     }
 
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  test('Should return 500 if AddFile throws', () => {
+  test('Should return 500 if AddFile throws', async () => {
     const { sut, addFileStub } = makeSut()
-    jest.spyOn(addFileStub, 'add').mockImplementationOnce((file: AddFileModel) => {
-      throw new Error()
+    jest.spyOn(addFileStub, 'add').mockImplementationOnce(async (file: AddFileModel) => {
+      return await Promise.reject(new Error())
     })
 
     const httpRequest = {
@@ -318,12 +318,12 @@ describe('Upload Controller', () => {
       }
     }
 
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
     expect(httpResponse.body).toEqual(new ServerError())
   })
 
-  test('Should return 200 if everything is fine', () => {
+  test('Should return 200 if everything is fine', async () => {
     const { sut } = makeSut()
     const httpRequest = {
       body: {
@@ -339,7 +339,7 @@ describe('Upload Controller', () => {
       }
     }
 
-    const httpResponse = sut.handle(httpRequest)
+    const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(200)
     expect(httpResponse.body).toEqual({
       id: 'valid_id',
