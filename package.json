@@ -4,9 +4,14 @@
   "description": "Create subtitles for audio/video using yYoutube",
   "main": "index.js",
   "scripts": {
-    "test": "jest --passWithNoTests --watch",
+    "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
+    "test:parallel": "jest --passWithNoTests --silent --noStackTrace",
+    "test:verbose": "jest --passWithNoTests --runInBand",
+    "test:unit": "npm test -- --watch -c jest-unit-config.js",
+    "test:integration": "npm test -- --watch -c jest-integration-config.js",
+    "test:staged": "npm test -- --findRelatedTests",
+    "test:ci": "npm test -- --coverage",
     "test:clear": "jest --clearCache",
-    "test:staged": "jest --passWithNoTests",
     "lint": "eslint src/** --fix",
     "lint-staged": "lint-staged",
     "prepare": "husky install"
