@@ -7,6 +7,7 @@ interface SutTypes {
 
 const makeSut = (): SutTypes => {
   const sut = new LanguageValidatorAdapter()
+  jest.spyOn(sut, 'isValid').mockReturnValue(true)
 
   return {
     sut
@@ -26,7 +27,6 @@ describe('Language Validator', () => {
 
   test('Should return true if a valid language is provided', () => {
     const { sut } = makeSut()
-    jest.spyOn(sut, 'isValid').mockReturnValue(true)
 
     const language = 'valid_language'
     const isValid = sut.isValid(language)
