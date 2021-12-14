@@ -275,6 +275,30 @@ describe('Upload Controller', () => {
     })
   })
 
+  test('Should return 500 if AddFile throws', () => {
+    const { sut, addFileStub } = makeSut()
+    jest.spyOn(addFileStub, 'add').mockImplementationOnce((file: AddFileModel) => {
+      throw new Error()
+    })
+
+    const httpRequest = {
+      body: {
+        language: 'any_language'
+      },
+      file: {
+        mimetype: 'any_mimetype',
+        size: 1073741824,
+        destination: 'any_destination',
+        filename: 'any_filename',
+        path: 'any_path'
+      }
+    }
+
+    const httpResponse = sut.handle(httpRequest)
+    expect(httpResponse.statusCode).toBe(500)
+    expect(httpResponse.body).toEqual(new ServerError())
+  })
+
   test('Should return 200 if everything is fine', () => {
     const { sut } = makeSut()
     const httpRequest = {
