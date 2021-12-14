@@ -330,17 +330,22 @@ describe('Upload Controller', () => {
         language: 'en'
       },
       file: {
-        mimetype: 'video/mp4',
+        mimetype: 'valid_mimetype',
         size: 1073741824,
-        destination: path.resolve(__dirname),
-        filename: 'input.mp4',
-        path: path.resolve(__dirname, 'input.mp4'),
+        destination: 'valid_destination',
+        filename: 'valid_filename',
+        path: 'valid_path',
         buffer: Buffer.from('')
       }
     }
 
     const httpResponse = sut.handle(httpRequest)
-
     expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({
+      id: 'valid_id',
+      filename: 'valid_filename',
+      path: 'valid_path',
+      size: 1073741824
+    })
   })
 })
