@@ -1,6 +1,6 @@
 import path from 'path'
 import { InvalidParamError, MissingParamError, ServerError } from '../../errors'
-import { FileValidator, File, LanguageValidator } from './upload-protocols'
+import { FileValidator, File, LanguageValidator, AddFile, AddFileModel, FileModel } from './upload-protocols'
 import { UploadController } from './upload'
 
 const makeLanguageValidator = (): LanguageValidator => {
@@ -23,21 +23,39 @@ const makeFileValidator = (): FileValidator => {
   return new FileValidatorStub()
 }
 
+const makeAddFile = (): AddFile => {
+  class AddFileStub implements AddFile {
+    add (file: AddFileModel): FileModel {
+      return {
+        id: 'valid_id',
+        filename: 'valid_filename',
+        path: 'valid_path',
+        size: 1073741824
+      }
+    }
+  }
+
+  return new AddFileStub()
+}
+
 interface SutTypes {
   sut: UploadController
   languageValidatorStub: LanguageValidator
   fileValidatorStub: FileValidator
+  addFileStub: AddFile
 }
 
 const makeSut = (): SutTypes => {
   const languageValidatorStub = makeLanguageValidator()
   const fileValidatorStub = makeFileValidator()
-  const sut = new UploadController(languageValidatorStub, fileValidatorStub)
+  const addFileStub = makeAddFile()
+  const sut = new UploadController(languageValidatorStub, fileValidatorStub, addFileStub)
 
   return {
     sut,
     languageValidatorStub,
-    fileValidatorStub
+    fileValidatorStub,
+    addFileStub
   }
 }
 
@@ -177,6 +195,31 @@ describe('Upload Controller', () => {
 
     sut.handle(httpRequest)
     expect(isValidSpy).toHaveBeenCalledWith(httpRequest.file)
+  })
+
+  test('Should call AddFile with correct values', () => {
+    const { sut, addFileStub } = makeSut()
+    const addFileSpy = jest.spyOn(addFileStub, 'add')
+    const httpRequest = {
+      body: {
+        language: 'en'
+      },
+      file: {
+        mimetype: 'video/mp4',
+        size: 1073741824,
+        destination: path.resolve(__dirname),
+        filename: 'input.mp4',
+        path: path.resolve(__dirname, 'input.mp4'),
+        buffer: Buffer.from('')
+      }
+    }
+
+    sut.handle(httpRequest)
+    expect(addFileSpy).toHaveBeenCalledWith({
+      filename: 'input.mp4',
+      path: path.resolve(__dirname, 'input.mp4'),
+      size: 1073741824
+    })
   })
 
   test('Should return 200 if everything is fine', () => {
