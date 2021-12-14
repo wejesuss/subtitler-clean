@@ -5,7 +5,7 @@ interface Languages {
   [K: string]: string
 }
 
-export class LanguageValidatorJsonRepo implements LanguageValidator {
+export class LanguageValidatorAdapter implements LanguageValidator {
   private readonly _languages: Languages
 
   constructor () {

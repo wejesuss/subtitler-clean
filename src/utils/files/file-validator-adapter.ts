@@ -2,7 +2,7 @@ import fs from 'fs'
 import { dirname, isAbsolute } from 'path'
 import { File, FileValidator } from '../../presentation/protocols/file-validator'
 
-export class FileValidatorVanilla implements FileValidator {
+export class FileValidatorAdapter implements FileValidator {
   private isFieldValid = true
   private readonly mimetypeRegExp = /(audio|video)\/([0-9A-Za-z-_]+)/g
   private readonly oneGigaByteLimit = 1073741824

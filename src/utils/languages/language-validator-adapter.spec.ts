@@ -1,12 +1,12 @@
 import { LanguageValidator } from '../../presentation/protocols/language-validator'
-import { LanguageValidatorJsonRepo } from './language-validator'
+import { LanguageValidatorAdapter } from './language-validator-adapter'
 
 interface SutTypes {
   sut: LanguageValidator
 }
 
 const makeSut = (): SutTypes => {
-  const sut = new LanguageValidatorJsonRepo()
+  const sut = new LanguageValidatorAdapter()
 
   return {
     sut
