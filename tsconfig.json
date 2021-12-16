@@ -7,7 +7,7 @@
     "forceConsistentCasingInFileNames": true,
     "allowJs": true,
     "skipLibCheck": true,
-    "strictNullChecks": true,
+    "strictNullChecks": false,
     "resolveJsonModule": true
   }
 }
