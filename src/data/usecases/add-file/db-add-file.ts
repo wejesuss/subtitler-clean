@@ -1,6 +1,4 @@
-import { FileModel } from '../../../domain/models/file'
-import { AddFile, AddFileModel } from '../../../domain/usecases/add-file'
-import { AddFileRepository } from '../../protocols/add-file-repository'
+import { AddFile, AddFileModel, FileModel, AddFileRepository } from './db-add-file-protocols'
 
 export class DbAddFile implements AddFile {
   private readonly addFileRepository: AddFileRepository

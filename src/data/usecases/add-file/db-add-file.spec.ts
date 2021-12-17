@@ -1,6 +1,4 @@
-import { FileModel } from '../../../domain/models/file'
-import { AddFileModel } from '../../../domain/usecases/add-file'
-import { AddFileRepository } from '../../protocols/add-file-repository'
+import { AddFileModel, FileModel, AddFileRepository } from './db-add-file-protocols'
 import { DbAddFile } from './db-add-file'
 
 const makeAddFileRepository = (): AddFileRepository => {
