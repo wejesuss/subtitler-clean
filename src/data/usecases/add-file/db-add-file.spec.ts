@@ -72,4 +72,21 @@ describe('DbAddFile Usecase', () => {
     const promise = sut.add(fileData)
     await expect(promise).rejects.toThrow()
   })
+
+  test('Should return a file on success', async () => {
+    const { sut } = makeSut()
+    const fileData = {
+      filename: 'valid_filename',
+      path: 'valid_path',
+      size: 1073741824
+    }
+
+    const file = await sut.add(fileData)
+    expect(file).toEqual({
+      id: 'valid_id',
+      filename: 'valid_filename',
+      path: 'valid_path',
+      size: 1073741824
+    })
+  })
 })
