@@ -1,14 +1,37 @@
+import { FileModel } from '../../../domain/models/file'
+import { AddFileModel } from '../../../domain/usecases/add-file'
+import { AddFileRepository } from '../../protocols/add-file-repository'
 import { DbAddFile } from './db-add-file'
+
+const makeAddFileRepository = (): AddFileRepository => {
+  class AddFileRepositoryStub implements AddFileRepository {
+    async add (fileData: AddFileModel): Promise<FileModel> {
+      const fakeFile = {
+        id: 'valid_id',
+        filename: 'valid_filename',
+        path: 'valid_path',
+        size: 1073741824
+      }
+
+      return await new Promise(resolve => resolve(fakeFile))
+    }
+  }
+
+  return new AddFileRepositoryStub()
+}
 
 interface SutTypes {
   sut: DbAddFile
+  addFileRepositoryStub: AddFileRepository
 }
 
 const makeSut = (): SutTypes => {
-  const sut = new DbAddFile()
+  const addFileRepositoryStub = makeAddFileRepository()
+  const sut = new DbAddFile(addFileRepositoryStub)
 
   return {
-    sut
+    sut,
+    addFileRepositoryStub
   }
 }
 
@@ -24,5 +47,18 @@ describe('DbAddFile Usecase', () => {
 
     await sut.add(fileData)
     expect(addSpy).toHaveBeenCalledWith(fileData)
+  })
+
+  test('Should call AddFileRepository with correct values', async () => {
+    const { sut, addFileRepositoryStub } = makeSut()
+    const addFileRepositorySpy = jest.spyOn(addFileRepositoryStub, 'add')
+    const fileData = {
+      filename: 'valid_filename',
+      path: 'valid_path',
+      size: 1073741824
+    }
+
+    await sut.add(fileData)
+    expect(addFileRepositorySpy).toHaveBeenCalledWith(fileData)
   })
 })
