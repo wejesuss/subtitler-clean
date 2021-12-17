@@ -62,7 +62,7 @@ describe('DbAddFile Usecase', () => {
 
   test('Should throw if AddFileRepository throws', async () => {
     const { sut, addFileRepositoryStub } = makeSut()
-    jest.spyOn(addFileRepositoryStub, 'add').mockReturnValueOnce(new Promise((resolve, reject) => reject(new Error())))
+    jest.spyOn(addFileRepositoryStub, 'add').mockReturnValueOnce(Promise.reject(new Error()))
     const fileData = {
       filename: 'valid_filename',
       path: 'valid_path',
