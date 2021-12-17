@@ -8,7 +8,7 @@ export class DbAddFile implements AddFile {
   }
 
   async add (fileData: AddFileModel): Promise<FileModel> {
-    await this.addFileRepository.add(fileData)
-    return await new Promise(resolve => resolve(null))
+    const file = await this.addFileRepository.add(fileData)
+    return file
   }
 }
