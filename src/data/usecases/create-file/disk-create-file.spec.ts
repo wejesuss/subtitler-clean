@@ -1,4 +1,4 @@
-import { CreateFileStorage, CreateFileStorageModel } from '../../protocols/create-file-storage'
+import { CreateFileStorage, CreateFileStorageModel } from './disk-create-file-protocols'
 import { DiskCreateFile } from './disk-create-file'
 
 describe('DiskCreateFile Usecase', () => {

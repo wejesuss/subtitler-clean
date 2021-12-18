@@ -1,5 +1,4 @@
-import { CreateFile, CreateFileModel } from '../../../domain/usecases/create-file'
-import { CreateFileStorage } from '../../protocols/create-file-storage'
+import { CreateFile, CreateFileStorage, CreateFileModel } from './disk-create-file-protocols'
 
 export class DiskCreateFile implements CreateFile {
   private readonly createFileStorage: CreateFileStorage
