@@ -81,4 +81,19 @@ describe('DiskCreateFile Usecase', () => {
     const promise = sut.create(fileData)
     await expect(promise).rejects.toThrowError(new CreateFileError())
   })
+
+  test('Should return true if CreateFileStorage returns true', async () => {
+    const { sut } = makeSut()
+
+    const fileData = {
+      mimetype: 'valid_mimetype',
+      filename: 'valid_filename',
+      path: 'valid_path',
+      size: 1073741824,
+      buffer: Buffer.from('')
+    }
+
+    const created = await sut.create(fileData)
+    expect(created).toBe(true)
+  })
 })
