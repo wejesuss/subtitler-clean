@@ -20,6 +20,6 @@ export class DiskCreateFile implements CreateFile {
       throw new CreateFileError()
     }
 
-    return await Promise.resolve(null)
+    return true
   }
 }
