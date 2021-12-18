@@ -1,4 +1,5 @@
 import { CreateFile, CreateFileStorage, CreateFileModel } from './disk-create-file-protocols'
+import { CreateFileError } from '../../errors/create-file-error'
 
 export class DiskCreateFile implements CreateFile {
   private readonly createFileStorage: CreateFileStorage
@@ -16,7 +17,7 @@ export class DiskCreateFile implements CreateFile {
     })
 
     if (!createdSuccessfully) {
-      return await Promise.reject(new Error('CreateFileStorage: File not created successfully'))
+      throw new CreateFileError()
     }
 
     return await Promise.resolve(null)

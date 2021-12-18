@@ -1,4 +1,5 @@
 import { CreateFileStorage, CreateFileStorageModel } from './disk-create-file-protocols'
+import { CreateFileError } from '../../errors/create-file-error'
 import { DiskCreateFile } from './disk-create-file'
 
 const makeCreateFileStorage = (): CreateFileStorage => {
@@ -78,6 +79,6 @@ describe('DiskCreateFile Usecase', () => {
     }
 
     const promise = sut.create(fileData)
-    await expect(promise).rejects.toThrowError(new Error('CreateFileStorage: File not created successfully'))
+    await expect(promise).rejects.toThrowError(new CreateFileError())
   })
 })
