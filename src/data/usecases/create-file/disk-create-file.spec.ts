@@ -48,4 +48,20 @@ describe('DiskCreateFile Usecase', () => {
       buffer: Buffer.from('')
     })
   })
+
+  test('Should throw if CreateFileStorage throws', async () => {
+    const { sut, createFileStorageStub } = makeSut()
+    jest.spyOn(createFileStorageStub, 'create').mockReturnValueOnce(Promise.reject(new Error()))
+
+    const fileData = {
+      mimetype: 'valid_mimetype',
+      filename: 'valid_filename',
+      path: 'valid_path',
+      size: 1073741824,
+      buffer: Buffer.from('')
+    }
+
+    const promise = sut.create(fileData)
+    await expect(promise).rejects.toThrow()
+  })
 })
