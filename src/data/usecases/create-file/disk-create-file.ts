@@ -8,12 +8,16 @@ export class DiskCreateFile implements CreateFile {
   }
 
   async create (fileData: CreateFileModel): Promise<boolean> {
-    await this.createFileStorage.create({
+    const createdSuccessfully = await this.createFileStorage.create({
       filename: fileData.filename,
       path: fileData.path,
       size: fileData.size,
       buffer: fileData.buffer
     })
+
+    if (!createdSuccessfully) {
+      return await Promise.reject(new Error('CreateFileStorage: File not created successfully'))
+    }
 
     return await Promise.resolve(null)
   }
