@@ -18,7 +18,7 @@ export class FileValidatorAdapter implements FileValidator {
   private verifySize (size: number): void {
     const limit = this.oneGigaByteLimit
 
-    if (size > limit) {
+    if (!(size < limit)) {
       this.isFieldValid = false
     }
   }
@@ -26,7 +26,7 @@ export class FileValidatorAdapter implements FileValidator {
   private verifyPath (path: string, buffer?: Buffer): void {
     const exists = fs.existsSync(path)
 
-    if ((!exists && !Buffer.isBuffer(buffer))) {
+    if (!buffer || !exists) {
       this.isFieldValid = false
     }
   }
@@ -34,9 +34,11 @@ export class FileValidatorAdapter implements FileValidator {
   private verifyDestination (path: string, destination: string): void {
     const dirPath = dirname(path)
     const dirDest = destination
-    const isPathAbsolute = isAbsolute(dirPath) && isAbsolute(dirDest)
+    const isPathAbsolute = isAbsolute(dirPath)
+    const isDestAbsolute = isAbsolute(dirDest)
+    const isBothAbsolute = isPathAbsolute && isDestAbsolute
 
-    if (!isPathAbsolute || dirDest !== dirPath) {
+    if (!isBothAbsolute || dirDest !== dirPath) {
       this.isFieldValid = false
     }
   }
@@ -56,10 +58,6 @@ export class FileValidatorAdapter implements FileValidator {
     this.verifyPath(path, buffer)
     this.verifyDestination(path, destination)
 
-    if (!this.isFieldValid) {
-      return false
-    }
-
-    return true
+    return this.isFieldValid
   }
 }

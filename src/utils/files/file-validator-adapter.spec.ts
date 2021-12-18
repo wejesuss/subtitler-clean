@@ -1,3 +1,4 @@
+import path from 'path'
 import { FileValidatorAdapter } from './file-validator-adapter'
 
 interface SutTypes {
@@ -6,7 +7,6 @@ interface SutTypes {
 
 const makeSut = (): SutTypes => {
   const sut = new FileValidatorAdapter()
-  jest.spyOn(sut, 'isValid').mockReturnValue(true)
 
   return {
     sut
@@ -16,7 +16,7 @@ const makeSut = (): SutTypes => {
 describe('File Validator', () => {
   test('Should return false if an invalid file info is provided', () => {
     const { sut } = makeSut()
-    jest.spyOn(sut, 'isValid').mockReturnValue(false)
+    jest.spyOn(sut, 'isValid').mockReturnValueOnce(false)
 
     const file = {
       mimetype: 'invalid_mimetype',
@@ -33,6 +33,7 @@ describe('File Validator', () => {
 
   test('Should return true if nothing is wrong', () => {
     const { sut } = makeSut()
+    jest.spyOn(sut, 'isValid').mockReturnValueOnce(true)
 
     const file = {
       mimetype: 'valid_mimetype',
@@ -55,9 +56,9 @@ describe('File Validator', () => {
     const file = {
       mimetype: 'any_mimetype',
       size: 1073741824,
-      destination: 'any_destination',
+      destination: path.resolve(__dirname, 'any_destination'),
       filename: 'any_filename',
-      path: 'any_path',
+      path: path.resolve(__dirname, 'any_path'),
       buffer: Buffer.from('any')
     }
 
