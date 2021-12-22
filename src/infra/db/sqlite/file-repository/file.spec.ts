@@ -1,6 +1,10 @@
 import { SQLiteHelper } from '../helpers/sqlite-helper'
 import { FileSQLiteRepository } from './file'
 
+const makeSut = (): FileSQLiteRepository => {
+  return new FileSQLiteRepository()
+}
+
 describe('File SQLite Repository', () => {
   beforeAll(async () => {
     await SQLiteHelper.connect()
@@ -11,7 +15,7 @@ describe('File SQLite Repository', () => {
   })
 
   test('Should return a file on success', async () => {
-    const sut = new FileSQLiteRepository()
+    const sut = makeSut()
     const file = await sut.add({
       filename: 'any_filename',
       path: 'any_path',
