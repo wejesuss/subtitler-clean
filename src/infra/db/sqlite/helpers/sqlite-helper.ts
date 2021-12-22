@@ -1,5 +1,6 @@
 import { Database } from 'sqlite3'
 import { promisify } from 'util'
+import crypto from 'crypto'
 
 export const SQLiteHelper = {
   client: null as Database,
@@ -29,13 +30,16 @@ export const SQLiteHelper = {
   },
 
   async insertOne (collection: string, data: any): Promise<any> {
-    const columns = Object.keys(data)
+    const id = crypto.randomBytes(12).toString('hex')
+    const dataWithId = Object.assign({}, data, { id })
+
+    const columns = Object.keys(dataWithId)
     const placeholders = columns.map(() => '?').join(',')
-    const values = Object.values(data)
+    const values = Object.values(dataWithId)
 
     const run = promisify(this.client.run.bind(this.client))
     await run(`INSERT INTO ${collection} (${columns.join(',')}) VALUES (${placeholders})`, values)
 
-    return data
+    return dataWithId
   }
 }
