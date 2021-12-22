@@ -16,7 +16,8 @@ export const SQLiteHelper = {
 
   async createDb (filename: string): Promise<void> {
     return await new Promise<void>((resolve, reject) => {
-      this.client = new Database(filename, function () {
+      this.client = new Database(filename, function (err) {
+        if (err) reject(err)
         resolve()
       })
     })
