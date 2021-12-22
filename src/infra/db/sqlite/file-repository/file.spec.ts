@@ -25,3 +25,11 @@ describe('File SQLite Repository', () => {
     expect(file.size).toBe(1073741824)
   })
 })
+
+describe('SQLiteHelper', () => {
+  test('Should throw error if createDb throws', async () => {
+    const promise = SQLiteHelper.createDb(':invalid:')
+
+    await expect(promise).rejects.toThrow()
+  })
+})
