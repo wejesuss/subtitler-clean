@@ -10,6 +10,10 @@ describe('File SQLite Repository', () => {
     await SQLiteHelper.connect()
   })
 
+  beforeEach(async () => {
+    await SQLiteHelper.deleteAll('files')
+  })
+
   afterAll(async () => {
     await SQLiteHelper.disconnect()
   })

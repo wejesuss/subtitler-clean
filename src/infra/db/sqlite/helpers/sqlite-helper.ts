@@ -2,6 +2,8 @@ import { Database } from 'sqlite3'
 import { promisify } from 'util'
 import crypto from 'crypto'
 
+type Collections = 'files'
+
 export const SQLiteHelper = {
   client: null as Database,
 
@@ -29,7 +31,12 @@ export const SQLiteHelper = {
     await run('CREATE TABLE IF NOT EXISTS files (id TEXT, filename TEXT, path TEXT, size INTEGER)')
   },
 
-  async insertOne (collection: string, data: any): Promise<any> {
+  async deleteAll (collection: Collections) {
+    const run = promisify(this.client.run.bind(this.client))
+    await run(`DELETE FROM ${collection}`)
+  },
+
+  async insertOne (collection: Collections, data: any): Promise<any> {
     const id = crypto.randomBytes(12).toString('hex')
     const dataWithId = Object.assign({}, data, { id })
 
