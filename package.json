@@ -4,6 +4,7 @@
   "description": "Create subtitles for audio/video using yYoutube",
   "main": "index.js",
   "scripts": {
+    "start": "sucrase-node src/main/server.ts",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:parallel": "jest --passWithNoTests --silent --noStackTrace",
     "test:verbose": "jest --passWithNoTests --runInBand",
@@ -19,6 +20,7 @@
   "author": "Wemerson Jesus",
   "license": "ISC",
   "devDependencies": {
+    "@types/express": "^4.17.13",
     "@types/jest": "^27.0.3",
     "@types/node": "^16.11.11",
     "@types/sqlite3": "^3.1.8",
@@ -32,6 +34,7 @@
     "husky": "^7.0.4",
     "jest": "^27.4.3",
     "lint-staged": "^12.1.2",
+    "sucrase": "^3.20.3",
     "ts-jest": "^27.0.7",
     "typescript": "^4.5.2"
   },
@@ -42,6 +45,7 @@
     ]
   },
   "dependencies": {
+    "express": "^4.17.2",
     "sqlite3": "^5.0.2"
   }
 }
