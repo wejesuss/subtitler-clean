@@ -2,3 +2,4 @@ node_modules
 subtitler.drawio
 dist
 coverage
+subtitler.db
