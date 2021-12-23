@@ -1,7 +1,20 @@
 import request from 'supertest'
 import app from '../config/app'
+import { SQLiteHelper } from '../../infra/db/sqlite/helpers/sqlite-helper'
 
 describe('Upload Route', () => {
+  beforeAll(async () => {
+    await SQLiteHelper.connect()
+  })
+
+  beforeEach(async () => {
+    await SQLiteHelper.deleteAll('files')
+  })
+
+  afterAll(async () => {
+    await SQLiteHelper.disconnect()
+  })
+
   test('Should return a file on success', async () => {
     const fileData = Buffer.from([73, 68, 51, 4, 0, 0, 0, 0, 0, 114, 84, 69,
       78, 67, 0, 0, 0, 19, 0, 0, 3, 65, 100, 111,
