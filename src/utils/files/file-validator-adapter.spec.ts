@@ -58,8 +58,7 @@ describe('File Validator', () => {
       size: 1073741824,
       destination: path.resolve(__dirname, 'any_destination'),
       filename: 'any_filename',
-      path: path.resolve(__dirname, 'any_path'),
-      buffer: Buffer.from('any')
+      path: path.resolve(__dirname, 'any_path')
     }
 
     sut.isValid(file)
