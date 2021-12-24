@@ -26,7 +26,7 @@ export class FileValidatorAdapter implements FileValidator {
   private verifyPath (path: string, buffer?: Buffer): void {
     const exists = fs.existsSync(path)
 
-    if (!buffer || !exists) {
+    if (!buffer && !exists) {
       this.isFieldValid = false
     }
   }
