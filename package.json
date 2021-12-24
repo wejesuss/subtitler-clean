@@ -1,7 +1,7 @@
 {
   "name": "subtitler-clean",
   "version": "1.0.0",
-  "description": "Create subtitles for audio/video using yYoutube",
+  "description": "Create subtitles for audio/video using Youtube",
   "main": "index.js",
   "scripts": {
     "start": "sucrase-node src/main/server.ts",
