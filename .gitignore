@@ -4,3 +4,5 @@ dist
 coverage
 subtitler.db
 test_file_creation.txt
+public/uploads/**
+!public/uploads/.gitkeep
