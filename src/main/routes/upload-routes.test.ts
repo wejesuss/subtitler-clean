@@ -1,5 +1,6 @@
 import request from 'supertest'
 import app from '../config/app'
+import { existsSync } from 'fs'
 import { SQLiteHelper } from '../../infra/db/sqlite/helpers/sqlite-helper'
 
 describe('Upload Route', () => {
@@ -33,6 +34,14 @@ describe('Upload Route', () => {
         contentType: 'audio/mpeg'
       })
       .field('language', 'en')
-      .expect(200)
+      .expect((res) => {
+        const file = res.body
+        expect(res.statusCode).toBe(200)
+        expect(file).toBeTruthy()
+        expect(file.id).toBeTruthy()
+        expect(file.filename).toBe('sample.mp3')
+        expect(existsSync(file.path)).toBe(true)
+        expect(file.size).toBe(fileData.byteLength)
+      })
   })
 })
