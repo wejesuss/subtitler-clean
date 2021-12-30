@@ -1,6 +1,10 @@
 import { LanguageValidator } from '../../presentation/protocols/language-validator'
 import { LanguageValidatorAdapter } from './language-validator-adapter'
 
+const makeFakeLanguage = (): string => {
+  return 'any_language'
+}
+
 interface SutTypes {
   sut: LanguageValidator
 }
@@ -18,7 +22,7 @@ describe('Language Validator', () => {
     const { sut } = makeSut()
     jest.spyOn(sut, 'isValid').mockReturnValueOnce(false)
 
-    const language = 'invalid_language'
+    const language = makeFakeLanguage()
     const isValid = sut.isValid(language)
 
     expect(isValid).toBe(false)
@@ -28,7 +32,7 @@ describe('Language Validator', () => {
     const { sut } = makeSut()
     jest.spyOn(sut, 'isValid').mockReturnValue(true)
 
-    const language = 'valid_language'
+    const language = makeFakeLanguage()
     const isValid = sut.isValid(language)
 
     expect(isValid).toBe(true)
@@ -38,7 +42,7 @@ describe('Language Validator', () => {
     const { sut } = makeSut()
     const isValidSpy = jest.spyOn(sut, 'isValid')
 
-    const language = 'valid_language'
+    const language = makeFakeLanguage()
     sut.isValid(language)
 
     expect(isValidSpy).toHaveBeenCalledWith(language)

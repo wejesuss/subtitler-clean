@@ -1,4 +1,4 @@
-import { CreateFileStorage, CreateFileStorageModel } from './disk-create-file-protocols'
+import { CreateFileModel, CreateFileStorage, CreateFileStorageModel } from './disk-create-file-protocols'
 import { CreateFileError } from '../../errors/create-file-error'
 import { DiskCreateFile } from './disk-create-file'
 
@@ -11,6 +11,14 @@ const makeCreateFileStorage = (): CreateFileStorage => {
 
   return new CreateFileStorageStub()
 }
+
+const makeValidFileData = (): CreateFileModel => ({
+  mimetype: 'valid_mimetype',
+  filename: 'valid_filename',
+  path: 'valid_path',
+  size: 1073741824,
+  buffer: Buffer.from('')
+})
 
 interface SutTypes {
   sut: DiskCreateFile
@@ -32,13 +40,7 @@ describe('DiskCreateFile Usecase', () => {
     const { sut, createFileStorageStub } = makeSut()
     const createFileStorageSpy = jest.spyOn(createFileStorageStub, 'create')
 
-    const fileData = {
-      mimetype: 'valid_mimetype',
-      filename: 'valid_filename',
-      path: 'valid_path',
-      size: 1073741824,
-      buffer: Buffer.from('')
-    }
+    const fileData = makeValidFileData()
 
     await sut.create(fileData)
 
@@ -54,13 +56,7 @@ describe('DiskCreateFile Usecase', () => {
     const { sut, createFileStorageStub } = makeSut()
     jest.spyOn(createFileStorageStub, 'create').mockReturnValueOnce(Promise.reject(new Error()))
 
-    const fileData = {
-      mimetype: 'valid_mimetype',
-      filename: 'valid_filename',
-      path: 'valid_path',
-      size: 1073741824,
-      buffer: Buffer.from('')
-    }
+    const fileData = makeValidFileData()
 
     const promise = sut.create(fileData)
     await expect(promise).rejects.toThrow()
@@ -70,13 +66,7 @@ describe('DiskCreateFile Usecase', () => {
     const { sut, createFileStorageStub } = makeSut()
     jest.spyOn(createFileStorageStub, 'create').mockReturnValueOnce(Promise.resolve(false))
 
-    const fileData = {
-      mimetype: 'valid_mimetype',
-      filename: 'valid_filename',
-      path: 'valid_path',
-      size: 1073741824,
-      buffer: Buffer.from('')
-    }
+    const fileData = makeValidFileData()
 
     const promise = sut.create(fileData)
     await expect(promise).rejects.toThrowError(new CreateFileError())
@@ -85,13 +75,7 @@ describe('DiskCreateFile Usecase', () => {
   test('Should return true if CreateFileStorage returns true', async () => {
     const { sut } = makeSut()
 
-    const fileData = {
-      mimetype: 'valid_mimetype',
-      filename: 'valid_filename',
-      path: 'valid_path',
-      size: 1073741824,
-      buffer: Buffer.from('')
-    }
+    const fileData = makeValidFileData()
 
     const created = await sut.create(fileData)
     expect(created).toBe(true)

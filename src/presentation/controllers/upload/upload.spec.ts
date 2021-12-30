@@ -12,7 +12,8 @@ import {
   AddFileModel,
   FileModel,
   CreateFile,
-  CreateFileModel
+  CreateFileModel,
+  HttpRequest
 } from './upload-protocols'
 import { UploadController } from './upload'
 
@@ -49,7 +50,7 @@ const makeCreateFile = (): CreateFile => {
 const makeAddFile = (): AddFile => {
   class AddFileStub implements AddFile {
     async add (file: AddFileModel): Promise<FileModel> {
-      return await new Promise(resolve => resolve({
+      return await new Promise((resolve) => resolve({
         id: 'valid_id',
         filename: 'valid_filename',
         path: 'valid_path',
@@ -59,6 +60,21 @@ const makeAddFile = (): AddFile => {
   }
 
   return new AddFileStub()
+}
+
+const makeFakeHttpRequest = (): HttpRequest => {
+  return {
+    body: {
+      language: 'any_language'
+    },
+    file: {
+      mimetype: 'any_mimetype',
+      size: 1073741824,
+      destination: 'any_destination',
+      filename: 'any_filename',
+      path: 'any_path'
+    }
+  }
 }
 
 interface SutTypes {
@@ -101,11 +117,7 @@ describe('Upload Controller', () => {
     const { sut, languageValidatorStub } = makeSut()
     jest.spyOn(languageValidatorStub, 'isValid').mockReturnValueOnce(false)
 
-    const httpRequest = {
-      body: {
-        language: 'invalid_language'
-      }
-    }
+    const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
@@ -118,11 +130,7 @@ describe('Upload Controller', () => {
       throw new Error()
     })
 
-    const httpRequest = {
-      body: {
-        language: 'any_language'
-      }
-    }
+    const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
@@ -133,11 +141,7 @@ describe('Upload Controller', () => {
     const { sut, languageValidatorStub } = makeSut()
     const isValidSpy = jest.spyOn(languageValidatorStub, 'isValid')
 
-    const httpRequest = {
-      body: {
-        language: 'any_language'
-      }
-    }
+    const httpRequest = makeFakeHttpRequest()
 
     await sut.handle(httpRequest)
     expect(isValidSpy).toHaveBeenCalledWith(httpRequest.body.language)
@@ -160,18 +164,7 @@ describe('Upload Controller', () => {
     const { sut, fileValidatorStub } = makeSut()
     jest.spyOn(fileValidatorStub, 'isValid').mockReturnValueOnce(false)
 
-    const httpRequest = {
-      body: {
-        language: 'en'
-      },
-      file: {
-        mimetype: 'invalid_mimetype',
-        size: (1073741824 + 1),
-        destination: 'invalid_destination',
-        filename: 'invalid_filename',
-        path: 'invalid_path'
-      }
-    }
+    const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
@@ -184,18 +177,7 @@ describe('Upload Controller', () => {
       throw new Error()
     })
 
-    const httpRequest = {
-      body: {
-        language: 'any_language'
-      },
-      file: {
-        mimetype: 'any_mimetype',
-        size: 1073741824,
-        destination: 'any_destination',
-        filename: 'any_filename',
-        path: 'any_path'
-      }
-    }
+    const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
@@ -206,18 +188,7 @@ describe('Upload Controller', () => {
     const { sut, fileValidatorStub } = makeSut()
     const isValidSpy = jest.spyOn(fileValidatorStub, 'isValid')
 
-    const httpRequest = {
-      body: {
-        language: 'en'
-      },
-      file: {
-        mimetype: 'any_mimetype',
-        size: (1073741824 + 1),
-        destination: 'any_destination',
-        filename: 'any_filename',
-        path: 'any_path'
-      }
-    }
+    const httpRequest = makeFakeHttpRequest()
 
     await sut.handle(httpRequest)
     expect(isValidSpy).toHaveBeenCalledWith(httpRequest.file)
@@ -253,24 +224,12 @@ describe('Upload Controller', () => {
   test('Should call AddFile with correct values', async () => {
     const { sut, addFileStub } = makeSut()
     const addFileSpy = jest.spyOn(addFileStub, 'add')
-    const httpRequest = {
-      body: {
-        language: 'en'
-      },
-      file: {
-        mimetype: 'video/mp4',
-        size: 1073741824,
-        destination: path.resolve(__dirname),
-        filename: 'input.mp4',
-        path: path.resolve(__dirname, 'input.mp4'),
-        buffer: Buffer.from('')
-      }
-    }
+    const httpRequest = makeFakeHttpRequest()
 
     await sut.handle(httpRequest)
     expect(addFileSpy).toHaveBeenCalledWith({
-      filename: 'input.mp4',
-      path: path.resolve(__dirname, 'input.mp4'),
+      filename: 'any_filename',
+      path: 'any_path',
       size: 1073741824
     })
   })
@@ -281,18 +240,7 @@ describe('Upload Controller', () => {
       return await Promise.reject(new Error())
     })
 
-    const httpRequest = {
-      body: {
-        language: 'any_language'
-      },
-      file: {
-        mimetype: 'any_mimetype',
-        size: 1073741824,
-        destination: 'any_destination',
-        filename: 'any_filename',
-        path: 'any_path'
-      }
-    }
+    const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
@@ -305,18 +253,7 @@ describe('Upload Controller', () => {
       return await Promise.reject(new Error())
     })
 
-    const httpRequest = {
-      body: {
-        language: 'any_language'
-      },
-      file: {
-        mimetype: 'any_mimetype',
-        size: 1073741824,
-        destination: 'any_destination',
-        filename: 'any_filename',
-        path: 'any_path'
-      }
-    }
+    const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(500)
@@ -325,19 +262,7 @@ describe('Upload Controller', () => {
 
   test('Should return 200 if everything is fine', async () => {
     const { sut } = makeSut()
-    const httpRequest = {
-      body: {
-        language: 'en'
-      },
-      file: {
-        mimetype: 'valid_mimetype',
-        size: 1073741824,
-        destination: 'valid_destination',
-        filename: 'valid_filename',
-        path: 'valid_path',
-        buffer: Buffer.from('')
-      }
-    }
+    const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(200)
