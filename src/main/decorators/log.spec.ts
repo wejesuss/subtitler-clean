@@ -1,28 +1,41 @@
 import { Controller, HttpRequest, HttpResponse } from '../../presentation/protocols'
 import { LogControllerDecorator } from './log'
 
+const makeControllerStub = (): Controller => {
+  class ControllerStub implements Controller {
+    async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+      return await Promise.resolve(null)
+    }
+  }
+
+  return new ControllerStub()
+}
+
+const makeFakeHttpRequest = (): HttpRequest => ({
+  body: { language: 'any_language' }
+})
+
+interface SutTypes {
+  sut: LogControllerDecorator
+  controllerStub: Controller
+}
+
+const makeSut = (): SutTypes => {
+  const controllerStub = makeControllerStub()
+  const sut = new LogControllerDecorator(controllerStub)
+
+  return {
+    sut,
+    controllerStub
+  }
+}
+
 describe('LogControllerDecorator', () => {
   test('Should call controller with correct values', async () => {
-    class ControllerStub implements Controller {
-      async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-        return await Promise.resolve(null)
-      }
-    }
-
-    const controllerStub = new ControllerStub()
-    const sut = new LogControllerDecorator(controllerStub)
+    const { sut, controllerStub } = makeSut()
     const controllerSpy = jest.spyOn(controllerStub, 'handle')
 
-    await sut.handle({
-      body: {
-        language: 'any_language'
-      }
-    })
-
-    expect(controllerSpy).toHaveBeenCalledWith({
-      body: {
-        language: 'any_language'
-      }
-    })
+    await sut.handle(makeFakeHttpRequest())
+    expect(controllerSpy).toHaveBeenCalledWith(makeFakeHttpRequest())
   })
 })
