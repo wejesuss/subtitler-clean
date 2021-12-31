@@ -69,8 +69,7 @@ export class UploadController implements Controller {
 
       return ok(fileModel)
     } catch (error) {
-      console.error(error)
-      return internalServerError()
+      return internalServerError(error)
     }
   }
 }
