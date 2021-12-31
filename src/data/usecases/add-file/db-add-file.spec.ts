@@ -1,17 +1,17 @@
 import { AddFileModel, FileModel, AddFileRepository } from './db-add-file-protocols'
 import { DbAddFile } from './db-add-file'
 
+const makeFakeFile = (): FileModel => ({
+  id: 'valid_id',
+  filename: 'valid_filename',
+  path: 'valid_path',
+  size: 1073741824
+})
+
 const makeAddFileRepository = (): AddFileRepository => {
   class AddFileRepositoryStub implements AddFileRepository {
     async add (fileData: AddFileModel): Promise<FileModel> {
-      const fakeFile = {
-        id: 'valid_id',
-        filename: 'valid_filename',
-        path: 'valid_path',
-        size: 1073741824
-      }
-
-      return await new Promise((resolve) => resolve(fakeFile))
+      return await new Promise((resolve) => resolve(makeFakeFile()))
     }
   }
 
@@ -72,11 +72,6 @@ describe('DbAddFile Usecase', () => {
     const fileData = makeValidFileData()
 
     const file = await sut.add(fileData)
-    expect(file).toEqual({
-      id: 'valid_id',
-      filename: 'valid_filename',
-      path: 'valid_path',
-      size: 1073741824
-    })
+    expect(file).toEqual(makeFakeFile())
   })
 })

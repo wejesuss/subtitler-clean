@@ -16,6 +16,7 @@ import {
   HttpRequest
 } from './upload-protocols'
 import { UploadController } from './upload'
+import { badRequest, internalServerError, ok } from '../../helpers/http-helper'
 
 const makeLanguageValidator = (): LanguageValidator => {
   class LanguageValidatorStub implements LanguageValidator {
@@ -47,15 +48,17 @@ const makeCreateFile = (): CreateFile => {
   return new CreateFileStub()
 }
 
+const makeFakeFileModel = (): FileModel => ({
+  id: 'valid_id',
+  filename: 'valid_filename',
+  path: 'valid_path',
+  size: 1073741824
+})
+
 const makeAddFile = (): AddFile => {
   class AddFileStub implements AddFile {
     async add (file: AddFileModel): Promise<FileModel> {
-      return await new Promise((resolve) => resolve({
-        id: 'valid_id',
-        filename: 'valid_filename',
-        path: 'valid_path',
-        size: 1073741824
-      }))
+      return await new Promise((resolve) => resolve(makeFakeFileModel()))
     }
   }
 
@@ -109,8 +112,7 @@ describe('Upload Controller', () => {
     }
 
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('language'))
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('language')))
   })
 
   test('Should return 400 if no valid language is provided', async () => {
@@ -120,8 +122,7 @@ describe('Upload Controller', () => {
     const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new InvalidParamError('language'))
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('language')))
   })
 
   test('Should return 500 if LanguageValidator throws', async () => {
@@ -133,8 +134,7 @@ describe('Upload Controller', () => {
     const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError(null))
+    expect(httpResponse).toEqual(internalServerError(new ServerError(null)))
   })
 
   test('Should call LanguageValidator with correct language', async () => {
@@ -156,8 +156,7 @@ describe('Upload Controller', () => {
     }
 
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new MissingParamError('file'))
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('file')))
   })
 
   test('Should return 400 if no valid file is provided', async () => {
@@ -167,8 +166,8 @@ describe('Upload Controller', () => {
     const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(400)
-    expect(httpResponse.body).toEqual(new InvalidParamError('file'))
+
+    expect(httpResponse).toEqual(badRequest(new InvalidParamError('file')))
   })
 
   test('Should return 500 if FileValidator throws', async () => {
@@ -180,8 +179,7 @@ describe('Upload Controller', () => {
     const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError(null))
+    expect(httpResponse).toEqual(internalServerError(new ServerError(null)))
   })
 
   test('Should call FileValidator with correct file info', async () => {
@@ -243,8 +241,7 @@ describe('Upload Controller', () => {
     const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError(null))
+    expect(httpResponse).toEqual(internalServerError(new ServerError(null)))
   })
 
   test('Should return 500 if AddFile throws', async () => {
@@ -256,8 +253,7 @@ describe('Upload Controller', () => {
     const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(500)
-    expect(httpResponse.body).toEqual(new ServerError(null))
+    expect(httpResponse).toEqual(internalServerError(new ServerError(null)))
   })
 
   test('Should return 200 if everything is fine', async () => {
@@ -265,12 +261,6 @@ describe('Upload Controller', () => {
     const httpRequest = makeFakeHttpRequest()
 
     const httpResponse = await sut.handle(httpRequest)
-    expect(httpResponse.statusCode).toBe(200)
-    expect(httpResponse.body).toEqual({
-      id: 'valid_id',
-      filename: 'valid_filename',
-      path: 'valid_path',
-      size: 1073741824
-    })
+    expect(httpResponse).toEqual(ok(makeFakeFileModel()))
   })
 })
