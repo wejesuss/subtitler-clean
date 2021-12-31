@@ -4,7 +4,7 @@ import { File, FileValidator } from '../../presentation/protocols/file-validator
 
 export class FileValidatorAdapter implements FileValidator {
   private isFieldValid = true
-  private readonly mimetypeRegExp = /(audio|video)\/([0-9A-Za-z-_]+)/g
+  private readonly mimetypeRegExp = /(audio|video)\/([0-9A-Za-z-_]+)/
   private readonly oneGigaByteLimit = 1073741824
 
   private verifyMimetype (mimetype: string): void {
