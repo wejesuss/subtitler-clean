@@ -1,11 +1,14 @@
-import { MissingParamError } from '../../errors'
-import { badRequest, notFound } from '../../helpers/http-helper'
-import { HttpRequest } from '../../protocols'
-import { FileModel } from '../../../domain/models/file'
-import { GetFile } from '../../../domain/usecases/get-file'
+import { MissingParamError, NotFoundError } from '../../errors'
 import { CreateSubtitleController } from './create-subtitle'
-import { CreateSubtitle, CreateSubtitleModel } from '../../../domain/usecases/create-subtitle'
-import { NotFoundError } from '../../errors/not-found-error'
+import {
+  badRequest,
+  notFound,
+  HttpRequest,
+  FileModel,
+  GetFile,
+  CreateSubtitleModel,
+  CreateSubtitle
+} from './create-subtitle-protocols'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   body: {

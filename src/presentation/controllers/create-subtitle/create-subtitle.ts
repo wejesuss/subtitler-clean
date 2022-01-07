@@ -1,9 +1,13 @@
-import { Controller, HttpRequest, HttpResponse } from '../../protocols'
-import { badRequest, notFound } from '../../helpers/http-helper'
-import { MissingParamError } from '../../errors'
-import { GetFile } from '../../../domain/usecases/get-file'
-import { CreateSubtitle } from '../../../domain/usecases/create-subtitle'
-import { NotFoundError } from '../../errors/not-found-error'
+import { MissingParamError, NotFoundError } from '../../errors'
+import {
+  Controller,
+  HttpRequest,
+  HttpResponse,
+  badRequest,
+  notFound,
+  GetFile,
+  CreateSubtitle
+} from './create-subtitle-protocols'
 
 export class CreateSubtitleController implements Controller {
   private readonly getFile: GetFile
