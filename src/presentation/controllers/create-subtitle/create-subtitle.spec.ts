@@ -64,4 +64,14 @@ describe('Create Subtitle Controller', () => {
 
     expect(getFileSpy).toHaveBeenCalledWith('any_id')
   })
+
+  test('Should return 404 if file is not found with the provided id', async () => {
+    const { sut, getFileStub } = makeSut()
+    jest.spyOn(getFileStub, 'get').mockReturnValueOnce(new Promise((resolve) => resolve(null)))
+
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse.statusCode).toBe(404)
+    expect(httpResponse.body).toEqual(new Error('Not found: resource file not found'))
+  })
 })
