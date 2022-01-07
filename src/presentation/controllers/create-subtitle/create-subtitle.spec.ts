@@ -2,9 +2,21 @@ import { MissingParamError } from '../../errors'
 import { badRequest } from '../../helpers/http-helper'
 import { CreateSubtitleController } from './create-subtitle'
 
+interface SutTypes {
+  sut: CreateSubtitleController
+}
+
+const makeSut = (): SutTypes => {
+  const sut = new CreateSubtitleController()
+
+  return {
+    sut
+  }
+}
+
 describe('Create Subtitle Controller', () => {
   test('Should return 400 if no file id is provided', async () => {
-    const sut = new CreateSubtitleController()
+    const { sut } = makeSut()
     const httpRequest = {
       body: {
       }
