@@ -3,13 +3,10 @@ import {
   Controller,
   HttpRequest,
   HttpResponse,
-  badRequest,
-  internalServerError,
-  notFound,
-  ok,
   GetFile,
   CreateSubtitle
 } from './create-subtitle-protocols'
+import { badRequest, notFound, internalServerError, ok } from '../../helpers/http-helper'
 
 export class CreateSubtitleController implements Controller {
   private readonly getFile: GetFile

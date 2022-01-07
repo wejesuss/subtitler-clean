@@ -1,16 +1,13 @@
 import { MissingParamError, NotFoundError, ServerError } from '../../errors'
 import { CreateSubtitleController } from './create-subtitle'
 import {
-  badRequest,
-  notFound,
-  internalServerError,
-  ok,
   HttpRequest,
   FileModel,
   GetFile,
   CreateSubtitleModel,
   CreateSubtitle
 } from './create-subtitle-protocols'
+import { badRequest, notFound, internalServerError, ok } from '../../helpers/http-helper'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   body: {
