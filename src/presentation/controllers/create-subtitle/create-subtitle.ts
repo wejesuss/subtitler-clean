@@ -6,6 +6,7 @@ import {
   badRequest,
   internalServerError,
   notFound,
+  ok,
   GetFile,
   CreateSubtitle
 } from './create-subtitle-protocols'
@@ -37,6 +38,8 @@ export class CreateSubtitleController implements Controller {
         path: file.path,
         size: file.size
       })
+
+      return ok(true)
     } catch (error) {
       return internalServerError(error)
     }

@@ -1,4 +1,4 @@
-export { badRequest, notFound, internalServerError } from '../../helpers/http-helper'
+export { badRequest, notFound, internalServerError, ok } from '../../helpers/http-helper'
 export { Controller, HttpRequest, HttpResponse } from '../../protocols'
 export { FileModel } from '../../../domain/models/file'
 export { GetFile } from '../../../domain/usecases/get-file'
