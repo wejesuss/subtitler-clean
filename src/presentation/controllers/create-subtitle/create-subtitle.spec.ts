@@ -1,9 +1,10 @@
 import { MissingParamError, NotFoundError, ServerError } from '../../errors'
-import { internalServerError } from '../../helpers/http-helper'
 import { CreateSubtitleController } from './create-subtitle'
 import {
   badRequest,
   notFound,
+  internalServerError,
+  ok,
   HttpRequest,
   FileModel,
   GetFile,
@@ -126,5 +127,12 @@ describe('Create Subtitle Controller', () => {
     const httpResponse = await sut.handle(makeFakeHttpRequest())
 
     expect(httpResponse).toEqual(internalServerError(new ServerError(null)))
+  })
+
+  test('Should return 200 if everything is fine', async () => {
+    const { sut } = makeSut()
+
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+    expect(httpResponse).toEqual(ok(true))
   })
 })
