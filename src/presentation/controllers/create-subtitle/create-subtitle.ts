@@ -1,8 +1,9 @@
 import { Controller, HttpRequest, HttpResponse } from '../../protocols'
-import { badRequest } from '../../helpers/http-helper'
+import { badRequest, notFound } from '../../helpers/http-helper'
 import { MissingParamError } from '../../errors'
 import { GetFile } from '../../../domain/usecases/get-file'
 import { CreateSubtitle } from '../../../domain/usecases/create-subtitle'
+import { NotFoundError } from '../../errors/not-found-error'
 
 export class CreateSubtitleController implements Controller {
   private readonly getFile: GetFile
@@ -19,10 +20,7 @@ export class CreateSubtitleController implements Controller {
     }
     const file = await this.getFile.get(httpRequest.body.id)
     if (!file) {
-      return {
-        statusCode: 404,
-        body: new Error('Not found: resource file not found')
-      }
+      return notFound(new NotFoundError('file'))
     }
 
     await this.createSubtitle.create({

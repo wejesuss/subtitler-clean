@@ -1,10 +1,11 @@
 import { MissingParamError } from '../../errors'
-import { badRequest } from '../../helpers/http-helper'
+import { badRequest, notFound } from '../../helpers/http-helper'
 import { HttpRequest } from '../../protocols'
 import { FileModel } from '../../../domain/models/file'
 import { GetFile } from '../../../domain/usecases/get-file'
 import { CreateSubtitleController } from './create-subtitle'
 import { CreateSubtitle, CreateSubtitleModel } from '../../../domain/usecases/create-subtitle'
+import { NotFoundError } from '../../errors/not-found-error'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   body: {
@@ -85,8 +86,7 @@ describe('Create Subtitle Controller', () => {
 
     const httpResponse = await sut.handle(makeFakeHttpRequest())
 
-    expect(httpResponse.statusCode).toBe(404)
-    expect(httpResponse.body).toEqual(new Error('Not found: resource file not found'))
+    expect(httpResponse).toEqual(notFound(new NotFoundError('file')))
   })
 
   test('Should call CreateSubtitle if file is found', async () => {
