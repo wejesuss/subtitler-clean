@@ -1,4 +1,5 @@
-import { MissingParamError, NotFoundError } from '../../errors'
+import { MissingParamError, NotFoundError, ServerError } from '../../errors'
+import { internalServerError } from '../../helpers/http-helper'
 import { CreateSubtitleController } from './create-subtitle'
 import {
   badRequest,
@@ -103,5 +104,16 @@ describe('Create Subtitle Controller', () => {
       path: 'valid_path',
       size: 1073741824
     })
+  })
+
+  test('Should return 500 if CreateSubtitle throws', async () => {
+    const { sut, createSubtitleStub } = makeSut()
+    jest.spyOn(createSubtitleStub, 'create').mockImplementationOnce((file) => {
+      throw new Error()
+    })
+
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse).toEqual(internalServerError(new ServerError(null)))
   })
 })
