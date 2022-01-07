@@ -4,6 +4,7 @@ import {
   HttpRequest,
   HttpResponse,
   badRequest,
+  internalServerError,
   notFound,
   GetFile,
   CreateSubtitle
@@ -19,18 +20,22 @@ export class CreateSubtitleController implements Controller {
   }
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    if (!httpRequest.body.id) {
-      return badRequest(new MissingParamError('id'))
-    }
-    const file = await this.getFile.get(httpRequest.body.id)
-    if (!file) {
-      return notFound(new NotFoundError('file'))
-    }
+    try {
+      if (!httpRequest.body.id) {
+        return badRequest(new MissingParamError('id'))
+      }
+      const file = await this.getFile.get(httpRequest.body.id)
+      if (!file) {
+        return notFound(new NotFoundError('file'))
+      }
 
-    await this.createSubtitle.create({
-      filename: file.filename,
-      path: file.path,
-      size: file.size
-    })
+      await this.createSubtitle.create({
+        filename: file.filename,
+        path: file.path,
+        size: file.size
+      })
+    } catch (error) {
+      return internalServerError(error)
+    }
   }
 }
