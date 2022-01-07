@@ -4,6 +4,7 @@ import { HttpRequest } from '../../protocols'
 import { FileModel } from '../../../domain/models/file'
 import { GetFile } from '../../../domain/usecases/get-file'
 import { CreateSubtitleController } from './create-subtitle'
+import { CreateSubtitle, CreateSubtitleModel } from '../../../domain/usecases/create-subtitle'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   body: {
@@ -28,18 +29,31 @@ const makeGetFile = (): GetFile => {
   return new GetFileStub()
 }
 
+const makeCreateSubtitle = (): CreateSubtitle => {
+  class CreateSubtitleStub implements CreateSubtitle {
+    async create (file: CreateSubtitleModel): Promise<boolean> {
+      return true
+    }
+  }
+
+  return new CreateSubtitleStub()
+}
+
 interface SutTypes {
   sut: CreateSubtitleController
   getFileStub: GetFile
+  createSubtitleStub: CreateSubtitle
 }
 
 const makeSut = (): SutTypes => {
   const getFileStub = makeGetFile()
-  const sut = new CreateSubtitleController(getFileStub)
+  const createSubtitleStub = makeCreateSubtitle()
+  const sut = new CreateSubtitleController(getFileStub, createSubtitleStub)
 
   return {
     sut,
-    getFileStub
+    getFileStub,
+    createSubtitleStub
   }
 }
 
@@ -73,5 +87,18 @@ describe('Create Subtitle Controller', () => {
 
     expect(httpResponse.statusCode).toBe(404)
     expect(httpResponse.body).toEqual(new Error('Not found: resource file not found'))
+  })
+
+  test('Should call CreateSubtitle if file is found', async () => {
+    const { sut, createSubtitleStub } = makeSut()
+    const createSubtitleSpy = jest.spyOn(createSubtitleStub, 'create')
+
+    await sut.handle(makeFakeHttpRequest())
+
+    expect(createSubtitleSpy).toHaveBeenCalledWith({
+      filename: 'valid_filename',
+      path: 'valid_path',
+      size: 1073741824
+    })
   })
 })
