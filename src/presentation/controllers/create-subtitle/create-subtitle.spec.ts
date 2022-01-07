@@ -93,6 +93,17 @@ describe('Create Subtitle Controller', () => {
     expect(httpResponse).toEqual(notFound(new NotFoundError('file')))
   })
 
+  test('Should return 500 if GetFile throws', async () => {
+    const { sut, getFileStub } = makeSut()
+    jest.spyOn(getFileStub, 'get').mockImplementationOnce((file) => {
+      throw new Error()
+    })
+
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse).toEqual(internalServerError(new ServerError(null)))
+  })
+
   test('Should call CreateSubtitle if file is found', async () => {
     const { sut, createSubtitleStub } = makeSut()
     const createSubtitleSpy = jest.spyOn(createSubtitleStub, 'create')
