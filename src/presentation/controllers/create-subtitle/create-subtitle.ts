@@ -21,10 +21,13 @@ export class CreateSubtitleController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      if (!httpRequest.body.id) {
+      const { id } = httpRequest.body
+
+      if (!id) {
         return badRequest(new MissingParamError('id'))
       }
-      const file = await this.getFile.get(httpRequest.body.id)
+
+      const file = await this.getFile.get(id)
       if (!file) {
         return notFound(new NotFoundError('file'))
       }
