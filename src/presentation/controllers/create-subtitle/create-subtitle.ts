@@ -31,6 +31,7 @@ export class CreateSubtitleController implements Controller {
       }
 
       await this.createSubtitle.create({
+        mimetype: file.mimetype,
         filename: file.filename,
         path: file.path,
         size: file.size

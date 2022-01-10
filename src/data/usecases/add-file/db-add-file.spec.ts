@@ -3,6 +3,7 @@ import { DbAddFile } from './db-add-file'
 
 const makeFakeFile = (): FileModel => ({
   id: 'valid_id',
+  mimetype: 'valid_mimetype',
   filename: 'valid_filename',
   path: 'valid_path',
   size: 1073741824
@@ -20,6 +21,7 @@ const makeAddFileRepository = (): AddFileRepository => {
 
 const makeValidFileData = (): AddFileModel => ({
   filename: 'valid_filename',
+  mimetype: 'valid_mimetype',
   path: 'valid_path',
   size: 1073741824
 })

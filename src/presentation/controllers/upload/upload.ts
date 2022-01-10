@@ -62,6 +62,7 @@ export class UploadController implements Controller {
       })
 
       const fileModel = await this.addFile.add({
+        mimetype: file.mimetype,
         filename: file.filename,
         path: file.path,
         size: file.size

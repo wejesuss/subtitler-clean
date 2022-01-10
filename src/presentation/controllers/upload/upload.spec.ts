@@ -50,6 +50,7 @@ const makeCreateFile = (): CreateFile => {
 
 const makeFakeFileModel = (): FileModel => ({
   id: 'valid_id',
+  mimetype: 'valid_mimetype',
   filename: 'valid_filename',
   path: 'valid_path',
   size: 1073741824
@@ -226,6 +227,7 @@ describe('Upload Controller', () => {
 
     await sut.handle(httpRequest)
     expect(addFileSpy).toHaveBeenCalledWith({
+      mimetype: 'any_mimetype',
       filename: 'any_filename',
       path: 'any_path',
       size: 1073741824
