@@ -3,7 +3,9 @@ import { CreateSubtitleController } from './create-subtitle'
 import {
   HttpRequest,
   FileModel,
+  SubtitleModel,
   GetFile,
+  GetSubtitle,
   CreateSubtitleModel,
   CreateSubtitle
 } from './create-subtitle-protocols'
@@ -23,6 +25,14 @@ const makeFakeFileModel = (): FileModel => ({
   size: 1073741824
 })
 
+const makeFakeSubtitleModel = (): SubtitleModel => ({
+  id: 'valid_id',
+  language: 'valid_language',
+  sent_to_creation: true,
+  file_id: 'valid_file_id',
+  external_id: 'valid_external_id'
+})
+
 const makeGetFile = (): GetFile => {
   class GetFileStub implements GetFile {
     async get (id: string): Promise<FileModel> {
@@ -31,6 +41,16 @@ const makeGetFile = (): GetFile => {
   }
 
   return new GetFileStub()
+}
+
+const makeGetSubtitle = (): GetSubtitle => {
+  class GetSubtitleStub implements GetSubtitle {
+    async get (fileId: string): Promise<SubtitleModel> {
+      return await new Promise((resolve) => resolve(makeFakeSubtitleModel()))
+    }
+  }
+
+  return new GetSubtitleStub()
 }
 
 const makeCreateSubtitle = (): CreateSubtitle => {
@@ -46,17 +66,20 @@ const makeCreateSubtitle = (): CreateSubtitle => {
 interface SutTypes {
   sut: CreateSubtitleController
   getFileStub: GetFile
+  getSubtitleStub: GetSubtitle
   createSubtitleStub: CreateSubtitle
 }
 
 const makeSut = (): SutTypes => {
   const getFileStub = makeGetFile()
+  const getSubtitleStub = makeGetSubtitle()
   const createSubtitleStub = makeCreateSubtitle()
-  const sut = new CreateSubtitleController(getFileStub, createSubtitleStub)
+  const sut = new CreateSubtitleController(getFileStub, getSubtitleStub, createSubtitleStub)
 
   return {
     sut,
     getFileStub,
+    getSubtitleStub,
     createSubtitleStub
   }
 }
@@ -126,6 +149,15 @@ describe('Create Subtitle Controller', () => {
     const httpResponse = await sut.handle(makeFakeHttpRequest())
 
     expect(httpResponse).toEqual(internalServerError(new ServerError(null)))
+  })
+
+  test('Should call GetSubtitle with correct value', async () => {
+    const { sut, getSubtitleStub } = makeSut()
+    const getSubtitleSpy = jest.spyOn(getSubtitleStub, 'get')
+
+    await sut.handle(makeFakeHttpRequest())
+
+    expect(getSubtitleSpy).toHaveBeenCalledWith('any_id')
   })
 
   test('Should return 200 if everything is fine', async () => {
