@@ -33,7 +33,10 @@ export class CreateSubtitleController implements Controller {
         return notFound(new NotFoundError('file'))
       }
 
-      await this.getSubtitle.get(id)
+      const subtitle = await this.getSubtitle.get(id)
+      if (subtitle) {
+        return ok(true)
+      }
 
       await this.createSubtitle.create({
         mimetype: file.mimetype,
