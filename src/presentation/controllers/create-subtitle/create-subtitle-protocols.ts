@@ -1,4 +1,6 @@
 export { Controller, HttpRequest, HttpResponse } from '../../protocols'
 export { FileModel } from '../../../domain/models/file'
+export { SubtitleModel } from '../../../domain/models/subtitle'
 export { GetFile } from '../../../domain/usecases/get-file'
+export { GetSubtitle } from '../../../domain/usecases/get-subtitle'
 export { CreateSubtitle, CreateSubtitleModel } from '../../../domain/usecases/create-subtitle'
