@@ -46,7 +46,7 @@ const makeGetFile = (): GetFile => {
 const makeGetSubtitle = (): GetSubtitle => {
   class GetSubtitleStub implements GetSubtitle {
     async get (fileId: string): Promise<SubtitleModel> {
-      return await new Promise((resolve) => resolve(makeFakeSubtitleModel()))
+      return await new Promise((resolve) => resolve(null))
     }
   }
 
@@ -158,6 +158,15 @@ describe('Create Subtitle Controller', () => {
     await sut.handle(makeFakeHttpRequest())
 
     expect(getSubtitleSpy).toHaveBeenCalledWith('any_id')
+  })
+
+  test('Should not call CreateSubtitle if subtitle already exists', async () => {
+    const { sut, getSubtitleStub, createSubtitleStub } = makeSut()
+    jest.spyOn(getSubtitleStub, 'get').mockReturnValueOnce(new Promise((resolve) => resolve(makeFakeSubtitleModel())))
+    const createSubtitleSpy = jest.spyOn(createSubtitleStub, 'create')
+
+    await sut.handle(makeFakeHttpRequest())
+    expect(createSubtitleSpy).toHaveBeenCalledTimes(0)
   })
 
   test('Should return 200 if everything is fine', async () => {
