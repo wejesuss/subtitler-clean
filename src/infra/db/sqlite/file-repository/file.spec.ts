@@ -22,6 +22,7 @@ describe('File SQLite Repository', () => {
     const sut = makeSut()
     const file = await sut.add({
       mimetype: 'any_mimetype',
+      language: 'any_language',
       filename: 'any_filename',
       path: 'any_path',
       size: 1073741824

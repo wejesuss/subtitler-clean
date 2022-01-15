@@ -20,6 +20,7 @@ const makeFakeHttpRequest = (): HttpRequest => ({
 const makeFakeFileModel = (): FileModel => ({
   id: 'valid_id',
   mimetype: 'valid_mimetype',
+  language: 'valid_language',
   filename: 'valid_filename',
   path: 'valid_path',
   size: 1073741824
@@ -134,6 +135,7 @@ describe('Create Subtitle Controller', () => {
 
     expect(createSubtitleSpy).toHaveBeenCalledWith({
       mimetype: 'valid_mimetype',
+      language: 'valid_language',
       filename: 'valid_filename',
       path: 'valid_path',
       size: 1073741824

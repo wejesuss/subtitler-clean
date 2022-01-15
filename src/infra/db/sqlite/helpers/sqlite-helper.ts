@@ -51,7 +51,7 @@ export const SQLiteHelper = {
     }
 
     const run = promisify(this.client.run.bind(this.client))
-    await run('CREATE TABLE IF NOT EXISTS files (id TEXT, mimetype TEXT, filename TEXT, path TEXT, size INTEGER)')
+    await run('CREATE TABLE IF NOT EXISTS files (id TEXT, mimetype TEXT, language TEXT, filename TEXT, path TEXT, size INTEGER)')
     await run('CREATE TABLE IF NOT EXISTS errors (id TEXT, stack TEXT, date DATE)')
   },
 
