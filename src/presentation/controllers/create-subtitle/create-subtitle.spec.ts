@@ -133,13 +133,7 @@ describe('Create Subtitle Controller', () => {
 
     await sut.handle(makeFakeHttpRequest())
 
-    expect(createSubtitleSpy).toHaveBeenCalledWith({
-      mimetype: 'valid_mimetype',
-      language: 'valid_language',
-      filename: 'valid_filename',
-      path: 'valid_path',
-      size: 1073741824
-    })
+    expect(createSubtitleSpy).toHaveBeenCalledWith(makeFakeFileModel())
   })
 
   test('Should return 500 if CreateSubtitle throws', async () => {

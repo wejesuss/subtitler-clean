@@ -1,4 +1,5 @@
 export interface CreateSubtitleModel {
+  id: string
   mimetype: string
   language: string
   filename: string
