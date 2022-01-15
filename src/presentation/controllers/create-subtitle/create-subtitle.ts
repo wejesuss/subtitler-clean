@@ -16,8 +16,8 @@ export class CreateSubtitleController implements Controller {
 
   constructor (getFile: GetFile, getSubtitle: GetSubtitle, createSubtitle: CreateSubtitle) {
     this.getFile = getFile
-    this.createSubtitle = createSubtitle
     this.getSubtitle = getSubtitle
+    this.createSubtitle = createSubtitle
   }
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
