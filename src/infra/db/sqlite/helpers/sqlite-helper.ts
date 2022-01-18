@@ -93,5 +93,18 @@ export const SQLiteHelper = {
     await run(`INSERT INTO ${collection} (${columns.join(',')}) VALUES (${placeholders})`, values)
 
     return dataWithId
+  },
+
+  async getOne (collection: Collections, id: string): Promise<any> {
+    const isConnected = await this.isConnected()
+    if (!isConnected) {
+      await this.connect(this.filename)
+    }
+
+    const get = promisify(this.client.get.bind(this.client))
+    const data = await get(`SELECT * FROM ${collection} WHERE id = ?`, id)
+    if (!data) return null
+
+    return data
   }
 }
