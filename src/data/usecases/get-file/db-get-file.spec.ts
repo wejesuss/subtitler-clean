@@ -65,4 +65,12 @@ describe('DbGetFile Usecase', () => {
 
     expect(file).toBeFalsy()
   })
+
+  test('Should return a file on success', async () => {
+    const { sut } = makeSut()
+
+    const file = await sut.get('valid_id')
+
+    expect(file).toBeTruthy()
+  })
 })
