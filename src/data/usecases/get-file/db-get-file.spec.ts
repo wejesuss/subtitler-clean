@@ -45,4 +45,15 @@ describe('DbGetFile Usecase', () => {
 
     expect(getFileSpy).toHaveBeenCalledWith(id)
   })
+
+  test('Should throw if GetFileRepository throws', async () => {
+    const { sut, getFileRepositoryStub } = makeSut()
+    jest.spyOn(getFileRepositoryStub, 'get').mockImplementationOnce(async () => {
+      throw new Error()
+    })
+
+    const promise = sut.get('valid_id')
+
+    await expect(promise).rejects.toThrow()
+  })
 })
