@@ -6,8 +6,8 @@ import {
   SubtitleModel,
   GetFile,
   GetSubtitle,
-  CreateSubtitleModel,
-  CreateSubtitle
+  AddSubtitleModel,
+  AddSubtitle
 } from './create-subtitle-protocols'
 import { badRequest, notFound, internalServerError, ok } from '../../helpers/http-helper'
 
@@ -54,34 +54,34 @@ const makeGetSubtitle = (): GetSubtitle => {
   return new GetSubtitleStub()
 }
 
-const makeCreateSubtitle = (): CreateSubtitle => {
-  class CreateSubtitleStub implements CreateSubtitle {
-    async create (file: CreateSubtitleModel): Promise<boolean> {
+const makeAddSubtitle = (): AddSubtitle => {
+  class AddSubtitleStub implements AddSubtitle {
+    async add (file: AddSubtitleModel): Promise<boolean> {
       return true
     }
   }
 
-  return new CreateSubtitleStub()
+  return new AddSubtitleStub()
 }
 
 interface SutTypes {
   sut: CreateSubtitleController
   getFileStub: GetFile
   getSubtitleStub: GetSubtitle
-  createSubtitleStub: CreateSubtitle
+  addSubtitleStub: AddSubtitle
 }
 
 const makeSut = (): SutTypes => {
   const getFileStub = makeGetFile()
   const getSubtitleStub = makeGetSubtitle()
-  const createSubtitleStub = makeCreateSubtitle()
-  const sut = new CreateSubtitleController(getFileStub, getSubtitleStub, createSubtitleStub)
+  const addSubtitleStub = makeAddSubtitle()
+  const sut = new CreateSubtitleController(getFileStub, getSubtitleStub, addSubtitleStub)
 
   return {
     sut,
     getFileStub,
     getSubtitleStub,
-    createSubtitleStub
+    addSubtitleStub
   }
 }
 
@@ -127,18 +127,18 @@ describe('Create Subtitle Controller', () => {
     expect(httpResponse).toEqual(internalServerError(new ServerError(null)))
   })
 
-  test('Should call CreateSubtitle if file is found', async () => {
-    const { sut, createSubtitleStub } = makeSut()
-    const createSubtitleSpy = jest.spyOn(createSubtitleStub, 'create')
+  test('Should call AddSubtitle if file is found', async () => {
+    const { sut, addSubtitleStub } = makeSut()
+    const addSubtitleSpy = jest.spyOn(addSubtitleStub, 'add')
 
     await sut.handle(makeFakeHttpRequest())
 
-    expect(createSubtitleSpy).toHaveBeenCalledWith(makeFakeFileModel())
+    expect(addSubtitleSpy).toHaveBeenCalledWith(makeFakeFileModel())
   })
 
-  test('Should return 500 if CreateSubtitle throws', async () => {
-    const { sut, createSubtitleStub } = makeSut()
-    jest.spyOn(createSubtitleStub, 'create').mockImplementationOnce((file) => {
+  test('Should return 500 if AddSubtitle throws', async () => {
+    const { sut, addSubtitleStub } = makeSut()
+    jest.spyOn(addSubtitleStub, 'add').mockImplementationOnce((file) => {
       throw new Error()
     })
 
@@ -156,13 +156,13 @@ describe('Create Subtitle Controller', () => {
     expect(getSubtitleSpy).toHaveBeenCalledWith('any_id')
   })
 
-  test('Should not call CreateSubtitle if subtitle already exists', async () => {
-    const { sut, getSubtitleStub, createSubtitleStub } = makeSut()
+  test('Should not call AddSubtitle if subtitle already exists', async () => {
+    const { sut, getSubtitleStub, addSubtitleStub } = makeSut()
     jest.spyOn(getSubtitleStub, 'get').mockReturnValueOnce(new Promise((resolve) => resolve(makeFakeSubtitleModel())))
-    const createSubtitleSpy = jest.spyOn(createSubtitleStub, 'create')
+    const addSubtitleSpy = jest.spyOn(addSubtitleStub, 'add')
 
     await sut.handle(makeFakeHttpRequest())
-    expect(createSubtitleSpy).toHaveBeenCalledTimes(0)
+    expect(addSubtitleSpy).toHaveBeenCalledTimes(0)
   })
 
   test('Should return 500 if GetSubtitle throws', async () => {

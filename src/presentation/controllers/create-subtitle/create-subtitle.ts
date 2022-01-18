@@ -4,7 +4,7 @@ import {
   HttpRequest,
   HttpResponse,
   GetFile,
-  CreateSubtitle,
+  AddSubtitle,
   GetSubtitle
 } from './create-subtitle-protocols'
 import { badRequest, notFound, internalServerError, ok } from '../../helpers/http-helper'
@@ -12,12 +12,12 @@ import { badRequest, notFound, internalServerError, ok } from '../../helpers/htt
 export class CreateSubtitleController implements Controller {
   private readonly getFile: GetFile
   private readonly getSubtitle: GetSubtitle
-  private readonly createSubtitle: CreateSubtitle
+  private readonly addSubtitle: AddSubtitle
 
-  constructor (getFile: GetFile, getSubtitle: GetSubtitle, createSubtitle: CreateSubtitle) {
+  constructor (getFile: GetFile, getSubtitle: GetSubtitle, addSubtitle: AddSubtitle) {
     this.getFile = getFile
     this.getSubtitle = getSubtitle
-    this.createSubtitle = createSubtitle
+    this.addSubtitle = addSubtitle
   }
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
@@ -38,7 +38,7 @@ export class CreateSubtitleController implements Controller {
         return ok(true)
       }
 
-      await this.createSubtitle.create(file)
+      await this.addSubtitle.add(file)
 
       return ok(true)
     } catch (error) {
