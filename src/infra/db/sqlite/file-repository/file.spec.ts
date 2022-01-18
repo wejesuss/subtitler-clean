@@ -34,4 +34,23 @@ describe('File SQLite Repository', () => {
     expect(file.path).toBe('any_path')
     expect(file.size).toBe(1073741824)
   })
+
+  test('Should get file on success', async () => {
+    const sut = makeSut()
+    let file = await sut.add({
+      mimetype: 'any_mimetype',
+      language: 'any_language',
+      filename: 'any_filename',
+      path: 'any_path',
+      size: 1073741824
+    })
+
+    file = await sut.get(file.id)
+
+    expect(file).toBeTruthy()
+    expect(file.id).toBeTruthy()
+    expect(file.filename).toBe('any_filename')
+    expect(file.path).toBe('any_path')
+    expect(file.size).toBe(1073741824)
+  })
 })
