@@ -29,7 +29,7 @@ describe('File SQLite Repository', () => {
     await SQLiteHelper.disconnect()
   })
 
-  test('Should call SQLiteHeelper.insertOne with correct values', async () => {
+  test('Should call SQLiteHelper.insertOne with correct values', async () => {
     const sut = makeSut()
     const SQLiteHelperSpy = jest.spyOn(SQLiteHelper, 'insertOne')
     const fileData = makeFakeFileData()
@@ -47,6 +47,17 @@ describe('File SQLite Repository', () => {
     expect(file.filename).toBe('any_filename')
     expect(file.path).toBe('any_path')
     expect(file.size).toBe(1073741824)
+  })
+
+  test('Should call SQLiteHelper.getOne with correct values', async () => {
+    const sut = makeSut()
+    const SQLiteHelperSpy = jest.spyOn(SQLiteHelper, 'getOne')
+    const fileData = makeFakeFileData()
+
+    const file = await sut.add(fileData)
+    await sut.get(file.id)
+
+    expect(SQLiteHelperSpy).toHaveBeenCalledWith(collectionName, file.id)
   })
 
   test('Should get file on success', async () => {
