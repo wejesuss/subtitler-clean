@@ -60,4 +60,13 @@ describe('SQLiteHelper', () => {
     expect(connectSpy).toHaveBeenCalled()
     await sut.disconnect()
   })
+
+  test('Should call getOne reconnecting', async () => {
+    expect(sut.client).toBeNull()
+    const connectSpy = jest.spyOn(sut, 'connect')
+    await sut.getOne('files', 'any_id')
+
+    expect(connectSpy).toHaveBeenCalled()
+    await sut.disconnect()
+  })
 })
