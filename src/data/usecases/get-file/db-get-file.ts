@@ -8,7 +8,6 @@ export class DbGetFile implements GetFile {
   }
 
   async get (id: string): Promise<FileModel> {
-    await this.getFileRepository.get(id)
-    return await new Promise((resolve) => resolve(null))
+    return await this.getFileRepository.get(id)
   }
 }
