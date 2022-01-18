@@ -56,4 +56,13 @@ describe('DbGetFile Usecase', () => {
 
     await expect(promise).rejects.toThrow()
   })
+
+  test('Should return falsy if file is not found', async () => {
+    const { sut, getFileRepositoryStub } = makeSut()
+    jest.spyOn(getFileRepositoryStub, 'get').mockReturnValueOnce(new Promise((resolve) => resolve(null)))
+
+    const file = await sut.get('valid_id')
+
+    expect(file).toBeFalsy()
+  })
 })
