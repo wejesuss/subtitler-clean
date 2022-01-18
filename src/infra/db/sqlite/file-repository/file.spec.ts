@@ -15,16 +15,27 @@ const makeSut = (): FileSQLiteRepository => {
 }
 
 describe('File SQLite Repository', () => {
+  const collectionName = 'files'
+
   beforeAll(async () => {
     await SQLiteHelper.connect()
   })
 
   beforeEach(async () => {
-    await SQLiteHelper.deleteAll('files')
+    await SQLiteHelper.deleteAll(collectionName)
   })
 
   afterAll(async () => {
     await SQLiteHelper.disconnect()
+  })
+
+  test('Should call SQLiteHeelper.insertOne with correct values', async () => {
+    const sut = makeSut()
+    const SQLiteHelperSpy = jest.spyOn(SQLiteHelper, 'insertOne')
+    const fileData = makeFakeFileData()
+    await sut.add(fileData)
+
+    expect(SQLiteHelperSpy).toHaveBeenCalledWith(collectionName, fileData)
   })
 
   test('Should return created file on success', async () => {
