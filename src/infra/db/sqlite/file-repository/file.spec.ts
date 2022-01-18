@@ -18,7 +18,7 @@ describe('File SQLite Repository', () => {
     await SQLiteHelper.disconnect()
   })
 
-  test('Should return a file on success', async () => {
+  test('Should return created file on success', async () => {
     const sut = makeSut()
     const file = await sut.add({
       mimetype: 'any_mimetype',
