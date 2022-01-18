@@ -1,5 +1,14 @@
 import { SQLiteHelper } from '../helpers/sqlite-helper'
+import { AddFileModel } from '../../../../domain/usecases/add-file'
 import { FileSQLiteRepository } from './file'
+
+const makeFakeFileData = (): AddFileModel => ({
+  mimetype: 'any_mimetype',
+  language: 'any_language',
+  filename: 'any_filename',
+  path: 'any_path',
+  size: 1073741824
+})
 
 const makeSut = (): FileSQLiteRepository => {
   return new FileSQLiteRepository()
@@ -20,13 +29,7 @@ describe('File SQLite Repository', () => {
 
   test('Should return created file on success', async () => {
     const sut = makeSut()
-    const file = await sut.add({
-      mimetype: 'any_mimetype',
-      language: 'any_language',
-      filename: 'any_filename',
-      path: 'any_path',
-      size: 1073741824
-    })
+    const file = await sut.add(makeFakeFileData())
 
     expect(file).toBeTruthy()
     expect(file.id).toBeTruthy()
@@ -37,13 +40,7 @@ describe('File SQLite Repository', () => {
 
   test('Should get file on success', async () => {
     const sut = makeSut()
-    let file = await sut.add({
-      mimetype: 'any_mimetype',
-      language: 'any_language',
-      filename: 'any_filename',
-      path: 'any_path',
-      size: 1073741824
-    })
+    let file = await sut.add(makeFakeFileData())
 
     file = await sut.get(file.id)
 
