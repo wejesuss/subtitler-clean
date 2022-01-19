@@ -7,7 +7,8 @@ import {
   GetFile,
   GetSubtitle,
   AddSubtitleModel,
-  AddSubtitle
+  AddSubtitle,
+  CreateSubtitle
 } from './create-subtitle-protocols'
 import { badRequest, notFound, internalServerError, ok } from '../../helpers/http-helper'
 
@@ -24,6 +25,16 @@ const makeFakeFileModel = (): FileModel => ({
   filename: 'valid_filename',
   path: 'valid_path',
   size: 1073741824
+})
+
+const makeFakeAddSubtitleModel = (): AddSubtitleModel => ({
+  id: 'valid_id',
+  mimetype: 'valid_mimetype',
+  language: 'valid_language',
+  filename: 'valid_filename',
+  path: 'valid_path',
+  sent_to_creation: true,
+  external_id: 'valid_external_id'
 })
 
 const makeFakeSubtitleModel = (): SubtitleModel => ({
@@ -54,10 +65,20 @@ const makeGetSubtitle = (): GetSubtitle => {
   return new GetSubtitleStub()
 }
 
+const makeCreateSubtitle = (): CreateSubtitle => {
+  class CreateSubtitleStub implements CreateSubtitle {
+    async create (file: FileModel): Promise<AddSubtitleModel> {
+      return await new Promise((resolve) => resolve(makeFakeAddSubtitleModel()))
+    }
+  }
+
+  return new CreateSubtitleStub()
+}
+
 const makeAddSubtitle = (): AddSubtitle => {
   class AddSubtitleStub implements AddSubtitle {
-    async add (file: AddSubtitleModel): Promise<boolean> {
-      return true
+    async add (file: AddSubtitleModel): Promise<SubtitleModel> {
+      return await new Promise((resolve) => resolve(makeFakeSubtitleModel()))
     }
   }
 
@@ -68,19 +89,22 @@ interface SutTypes {
   sut: CreateSubtitleController
   getFileStub: GetFile
   getSubtitleStub: GetSubtitle
+  createSubtitleStub: CreateSubtitle
   addSubtitleStub: AddSubtitle
 }
 
 const makeSut = (): SutTypes => {
   const getFileStub = makeGetFile()
   const getSubtitleStub = makeGetSubtitle()
+  const createSubtitleStub = makeCreateSubtitle()
   const addSubtitleStub = makeAddSubtitle()
-  const sut = new CreateSubtitleController(getFileStub, getSubtitleStub, addSubtitleStub)
+  const sut = new CreateSubtitleController(getFileStub, getSubtitleStub, createSubtitleStub, addSubtitleStub)
 
   return {
     sut,
     getFileStub,
     getSubtitleStub,
+    createSubtitleStub,
     addSubtitleStub
   }
 }
@@ -127,13 +151,22 @@ describe('Create Subtitle Controller', () => {
     expect(httpResponse).toEqual(internalServerError(new ServerError(null)))
   })
 
+  test('Should call CreateSubtitle with correct values', async () => {
+    const { sut, createSubtitleStub } = makeSut()
+    const createSubtitleSpy = jest.spyOn(createSubtitleStub, 'create')
+
+    await sut.handle(makeFakeHttpRequest())
+
+    expect(createSubtitleSpy).toHaveBeenCalledWith(makeFakeFileModel())
+  })
+
   test('Should call AddSubtitle if file is found', async () => {
     const { sut, addSubtitleStub } = makeSut()
     const addSubtitleSpy = jest.spyOn(addSubtitleStub, 'add')
 
     await sut.handle(makeFakeHttpRequest())
 
-    expect(addSubtitleSpy).toHaveBeenCalledWith(makeFakeFileModel())
+    expect(addSubtitleSpy).toHaveBeenCalledWith(makeFakeAddSubtitleModel())
   })
 
   test('Should return 500 if AddSubtitle throws', async () => {
