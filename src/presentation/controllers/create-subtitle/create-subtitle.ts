@@ -36,15 +36,15 @@ export class CreateSubtitleController implements Controller {
         return notFound(new NotFoundError('file'))
       }
 
-      const subtitle = await this.getSubtitle.get(id)
+      let subtitle = await this.getSubtitle.get(id)
       if (subtitle) {
         return ok(true)
       }
 
       const addSubtitleModel = await this.createSubtitle.create(file)
-      await this.addSubtitle.add(addSubtitleModel)
+      subtitle = await this.addSubtitle.add(addSubtitleModel)
 
-      return ok(true)
+      return ok(subtitle)
     } catch (error) {
       return internalServerError(error)
     }
