@@ -9,6 +9,7 @@ export class DbAddSubtitle implements AddSubtitle {
 
   async add (file: AddSubtitleModel): Promise<boolean> {
     await this.addSubtitleRepository.add(file)
-    return await new Promise((resolve) => resolve(null))
+
+    return true
   }
 }
