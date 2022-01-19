@@ -51,4 +51,15 @@ describe('ExternalCreateSubtitle Usecase', () => {
 
     expect(createSubtitleServiceSpy).toHaveBeenCalledWith(makeFakeMediaData())
   })
+
+  test('Should throw if CreateSubtitleService throws', async () => {
+    const { sut, createSubtitleServiceStub } = makeSut()
+    jest.spyOn(createSubtitleServiceStub, 'create').mockImplementationOnce(async () => {
+      throw new Error()
+    })
+
+    const promise = sut.create(makeFakeFileData())
+
+    await expect(promise).rejects.toThrow()
+  })
 })
