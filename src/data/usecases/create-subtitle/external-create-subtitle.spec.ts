@@ -1,5 +1,21 @@
-import { CreateSubtitleService, CreateSubtitleModel } from './external-create-subtitle-protocols'
+import { CreateSubtitleService, CreateSubtitleModel, FileModel } from './external-create-subtitle-protocols'
 import { ExternalCreateSubtitle } from './external-create-subtitle'
+
+const makeFakeFileData = (): FileModel => ({
+  id: 'valid_id',
+  mimetype: 'valid_mimetype',
+  language: 'valid_language',
+  filename: 'valid_filename',
+  path: 'valid_path',
+  size: 1073741824
+})
+
+const makeFakeMediaData = (): CreateSubtitleModel => ({
+  mimetype: 'valid_mimetype',
+  language: 'valid_language',
+  filename: 'valid_filename',
+  path: 'valid_path'
+})
 
 const makeCreateSubtitleService = (): CreateSubtitleService => {
   class CreateSubtitleServiceStub implements CreateSubtitleService {
@@ -31,20 +47,8 @@ describe('ExternalCreateSubtitle Usecase', () => {
     const { sut, createSubtitleServiceStub } = makeSut()
     const createSubtitleServiceSpy = jest.spyOn(createSubtitleServiceStub, 'create')
 
-    await sut.create({
-      id: 'valid_id',
-      mimetype: 'valid_mimetype',
-      language: 'valid_language',
-      filename: 'valid_filename',
-      path: 'valid_path',
-      size: 1073741824
-    })
+    await sut.create(makeFakeFileData())
 
-    expect(createSubtitleServiceSpy).toHaveBeenCalledWith({
-      mimetype: 'valid_mimetype',
-      language: 'valid_language',
-      filename: 'valid_filename',
-      path: 'valid_path'
-    })
+    expect(createSubtitleServiceSpy).toHaveBeenCalledWith(makeFakeMediaData())
   })
 })
