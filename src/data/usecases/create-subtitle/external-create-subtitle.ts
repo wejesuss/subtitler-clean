@@ -10,13 +10,23 @@ export class ExternalCreateSubtitle implements CreateSubtitle {
   }
 
   async create (file: FileModel): Promise<AddSubtitleModel> {
-    await this.createSubtitleService.create({
+    const externalId = await this.createSubtitleService.create({
       mimetype: file.mimetype,
       language: file.language,
       filename: file.filename,
       path: file.path
     })
 
-    return await new Promise((resolve) => resolve(null))
+    const addSubtitleModel: AddSubtitleModel = {
+      id: file.id,
+      mimetype: file.mimetype,
+      language: file.language,
+      filename: file.filename,
+      path: file.path,
+      external_id: externalId,
+      sent_to_creation: true
+    }
+
+    return addSubtitleModel
   }
 }
