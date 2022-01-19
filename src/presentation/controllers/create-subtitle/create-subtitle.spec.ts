@@ -205,8 +205,9 @@ describe('Create Subtitle Controller', () => {
     jest.spyOn(getSubtitleStub, 'get').mockReturnValueOnce(new Promise((resolve) => resolve(makeFakeSubtitleModel())))
     const addSubtitleSpy = jest.spyOn(addSubtitleStub, 'add')
 
-    await sut.handle(makeFakeHttpRequest())
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
     expect(addSubtitleSpy).toHaveBeenCalledTimes(0)
+    expect(httpResponse).toEqual(ok(makeFakeSubtitleModel()))
   })
 
   test('Should return 500 if GetSubtitle throws', async () => {
