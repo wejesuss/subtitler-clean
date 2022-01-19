@@ -38,7 +38,7 @@ export class CreateSubtitleController implements Controller {
 
       let subtitle = await this.getSubtitle.get(id)
       if (subtitle) {
-        return ok(true)
+        return ok(subtitle)
       }
 
       const addSubtitleModel = await this.createSubtitle.create(file)
