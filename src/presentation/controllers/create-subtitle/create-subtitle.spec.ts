@@ -200,6 +200,16 @@ describe('Create Subtitle Controller', () => {
     expect(getSubtitleSpy).toHaveBeenCalledWith('any_id')
   })
 
+  test('Should not call CreateSubtitle if subtitle already exists', async () => {
+    const { sut, getSubtitleStub, createSubtitleStub } = makeSut()
+    jest.spyOn(getSubtitleStub, 'get').mockReturnValueOnce(new Promise((resolve) => resolve(makeFakeSubtitleModel())))
+    const createSubtitleSpy = jest.spyOn(createSubtitleStub, 'create')
+
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+    expect(createSubtitleSpy).toHaveBeenCalledTimes(0)
+    expect(httpResponse).toEqual(ok(makeFakeSubtitleModel()))
+  })
+
   test('Should not call AddSubtitle if subtitle already exists', async () => {
     const { sut, getSubtitleStub, addSubtitleStub } = makeSut()
     jest.spyOn(getSubtitleStub, 'get').mockReturnValueOnce(new Promise((resolve) => resolve(makeFakeSubtitleModel())))
