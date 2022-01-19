@@ -53,4 +53,12 @@ describe('DbAddSubtitle Usecase', () => {
 
     expect(addSubtitleSpy).toHaveBeenCalledWith(fileData)
   })
+
+  test('Should return true on success', async () => {
+    const { sut } = makeSut()
+
+    const created = await sut.add(makeValidFileData())
+
+    expect(created).toBe(true)
+  })
 })
