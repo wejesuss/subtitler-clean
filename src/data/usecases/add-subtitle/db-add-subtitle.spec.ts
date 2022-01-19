@@ -54,6 +54,17 @@ describe('DbAddSubtitle Usecase', () => {
     expect(addSubtitleSpy).toHaveBeenCalledWith(fileData)
   })
 
+  test('Should throw if AddSubtitleRepository throws', async () => {
+    const { sut, addSubtitleRepositoryStub } = makeSut()
+    jest.spyOn(addSubtitleRepositoryStub, 'add').mockImplementationOnce(async () => {
+      throw new Error()
+    })
+
+    const promise = sut.add(makeValidFileData())
+
+    await expect(promise).rejects.toThrow()
+  })
+
   test('Should return true on success', async () => {
     const { sut } = makeSut()
 
