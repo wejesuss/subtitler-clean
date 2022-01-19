@@ -224,6 +224,6 @@ describe('Create Subtitle Controller', () => {
     const { sut } = makeSut()
 
     const httpResponse = await sut.handle(makeFakeHttpRequest())
-    expect(httpResponse).toEqual(ok(true))
+    expect(httpResponse).toEqual(ok(makeFakeSubtitleModel()))
   })
 })
