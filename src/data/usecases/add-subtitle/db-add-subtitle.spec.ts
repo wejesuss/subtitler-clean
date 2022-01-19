@@ -9,13 +9,14 @@ const makeFakeSubtitle = (): SubtitleModel => ({
   file_id: 'valid_file_id'
 })
 
-const makeValidFileData = (): AddSubtitleModel => ({
+const makeFakeAddSubtitleModel = (): AddSubtitleModel => ({
   id: 'valid_id',
   filename: 'valid_filename',
   mimetype: 'valid_mimetype',
   language: 'valid_language',
   path: 'valid_path',
-  size: 1073741824
+  sent_to_creation: true,
+  external_id: 'valid_external_id'
 })
 
 const makeAddSubtitleRepository = (): AddSubtitleRepository => {
@@ -48,7 +49,7 @@ describe('DbAddSubtitle Usecase', () => {
     const { sut, addSubtitleRepositoryStub } = makeSut()
     const addSubtitleSpy = jest.spyOn(addSubtitleRepositoryStub, 'add')
 
-    const fileData = makeValidFileData()
+    const fileData = makeFakeAddSubtitleModel()
     await sut.add(fileData)
 
     expect(addSubtitleSpy).toHaveBeenCalledWith(fileData)
@@ -60,16 +61,16 @@ describe('DbAddSubtitle Usecase', () => {
       throw new Error()
     })
 
-    const promise = sut.add(makeValidFileData())
+    const promise = sut.add(makeFakeAddSubtitleModel())
 
     await expect(promise).rejects.toThrow()
   })
 
-  test('Should return true on success', async () => {
+  test('Should return a subtitle on success', async () => {
     const { sut } = makeSut()
 
-    const created = await sut.add(makeValidFileData())
+    const subtitle = await sut.add(makeFakeAddSubtitleModel())
 
-    expect(created).toBe(true)
+    expect(subtitle).toEqual(makeFakeSubtitle())
   })
 })
