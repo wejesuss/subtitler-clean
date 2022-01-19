@@ -1,5 +1,6 @@
 import { CreateSubtitleService, CreateSubtitleModel, FileModel } from './external-create-subtitle-protocols'
 import { ExternalCreateSubtitle } from './external-create-subtitle'
+import { AddSubtitleModel } from '../../../domain/usecases/add-subtitle'
 
 const makeFakeFileData = (): FileModel => ({
   id: 'valid_id',
@@ -15,6 +16,16 @@ const makeFakeMediaData = (): CreateSubtitleModel => ({
   language: 'valid_language',
   filename: 'valid_filename',
   path: 'valid_path'
+})
+
+const makeFakeAddSubtitleModel = (): AddSubtitleModel => ({
+  id: 'valid_id',
+  mimetype: 'valid_mimetype',
+  language: 'valid_language',
+  filename: 'valid_filename',
+  path: 'valid_path',
+  sent_to_creation: true,
+  external_id: 'valid_external_id'
 })
 
 const makeCreateSubtitleService = (): CreateSubtitleService => {
@@ -61,5 +72,13 @@ describe('ExternalCreateSubtitle Usecase', () => {
     const promise = sut.create(makeFakeFileData())
 
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should return subtitle model on success', async () => {
+    const { sut } = makeSut()
+
+    const addSubtitleModel = await sut.create(makeFakeFileData())
+
+    expect(addSubtitleModel).toEqual(makeFakeAddSubtitleModel())
   })
 })
