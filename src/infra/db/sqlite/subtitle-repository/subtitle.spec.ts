@@ -12,6 +12,16 @@ const makeFakeFileData = (): AddSubtitleModel => ({
   external_id: 'any_external_id'
 })
 
+type FileId = Record<'file_id', string>
+type PartialAddSubtitleModel = Pick<AddSubtitleModel & FileId, 'language' | 'file_id' |'external_id' | 'sent_to_creation'>
+
+const makeFakeAddSubtitleModel = (): PartialAddSubtitleModel => ({
+  language: 'any_language',
+  file_id: 'any_id',
+  external_id: 'any_external_id',
+  sent_to_creation: true
+})
+
 const makeSut = (): SubtitleSQLiteRepository => {
   return new SubtitleSQLiteRepository()
 }
@@ -29,6 +39,16 @@ describe('Subtitle SQLite Repository', () => {
 
   afterAll(async () => {
     await SQLiteHelper.disconnect()
+  })
+
+  test('Should call SQLiteHelper.insertOne with correct values', async () => {
+    const sut = makeSut()
+    const SQLiteHelperSpy = jest.spyOn(SQLiteHelper, 'insertOne')
+    const fileData = makeFakeFileData()
+
+    await sut.add(fileData)
+
+    expect(SQLiteHelperSpy).toHaveBeenCalledWith(collectionName, makeFakeAddSubtitleModel())
   })
 
   test('Should return subtitle on success', async () => {
