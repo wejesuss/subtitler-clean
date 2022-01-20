@@ -2,7 +2,7 @@ import { Database } from 'sqlite3'
 import { promisify } from 'util'
 import crypto from 'crypto'
 
-type Collections = 'files' | 'errors'
+type Collections = 'files' | 'subtitles' | 'errors'
 
 export const SQLiteHelper = {
   client: null as Database,
@@ -52,6 +52,7 @@ export const SQLiteHelper = {
 
     const run = promisify(this.client.run.bind(this.client))
     await run('CREATE TABLE IF NOT EXISTS files (id TEXT, mimetype TEXT, language TEXT, filename TEXT, path TEXT, size INTEGER)')
+    await run('CREATE TABLE IF NOT EXISTS subtitles (id TEXT, language TEXT, sent_to_creation BOOLEAN, external_id TEXT, file_id TEXT REFERENCES files (id) ON DELETE CASCADE)')
     await run('CREATE TABLE IF NOT EXISTS errors (id TEXT, stack TEXT, date DATE)')
   },
 
