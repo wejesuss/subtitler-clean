@@ -35,6 +35,17 @@ const makeSut = (): SutTypes => {
 }
 
 describe('SubtitleYoutubeApiService', () => {
+  test('Should not call CreateVideoFromAudio if file mimetype not refers to an audio', async () => {
+    const { sut, createVideoFromAudioStub } = makeSut()
+    const createVideoSpy = jest.spyOn(createVideoFromAudioStub, 'create')
+    const includesSpy = jest.spyOn(String.prototype, 'includes')
+
+    await sut.create(makeMediaData())
+
+    expect(includesSpy).toHaveBeenCalledWith('audio/')
+    expect(createVideoSpy).toHaveBeenCalledTimes(0)
+  })
+
   test('Should call CreateVideoFromAudio if file mimetype refers to an audio', async () => {
     const { sut, createVideoFromAudioStub } = makeSut()
     const createVideoSpy = jest.spyOn(createVideoFromAudioStub, 'create')
