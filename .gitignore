@@ -4,6 +4,6 @@ dist
 coverage
 subtitler.db
 test_file_creation.txt
-subtitler-332316-70f1f43f45e8.json
+subtitler-credentials.json
 public/uploads/**
 !public/uploads/.gitkeep
