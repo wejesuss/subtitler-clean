@@ -58,8 +58,8 @@ export class SubtitleYoutubeApiService implements CreateSubtitleService {
       }
     }
 
-    await youtube.videos.insert(insertParams)
+    const res = await youtube.videos.insert(insertParams)
 
-    return await new Promise((resolve) => resolve(null))
+    return res.data.id
   }
 }
