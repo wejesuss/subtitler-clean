@@ -217,6 +217,23 @@ describe('SubtitleYoutubeApiService', () => {
     await expect(promise).rejects.toThrow()
   })
 
+  test('Should call youtube insert with new file path if CreateVideoFromAudio was called', async () => {
+    const { sut, createVideoFromAudioStub } = makeSut()
+    jest.spyOn(String.prototype, 'includes').mockReturnValueOnce(true)
+    jest.spyOn(createVideoFromAudioStub, 'create')
+
+    const mediaData = makeMediaData()
+    const insertParams = makeFakeInsertParams({
+      ...mediaData,
+      path: 'any_video_path'
+    })
+
+    await sut.create(mediaData)
+
+    expect(mockInsert).toHaveBeenCalledWith(insertParams)
+    expect(fs.createReadStream).toHaveBeenNthCalledWith(2, 'any_video_path')
+  })
+
   test('Should return video id on success', async () => {
     const { sut } = makeSut()
 

@@ -28,8 +28,9 @@ export class SubtitleYoutubeApiService implements CreateSubtitleService {
   }
 
   async create (mediaData: CreateSubtitleModel): Promise<string> {
+    let filePath = ''
     if (mediaData.mimetype.includes('audio/')) {
-      await this.createVideoFromAudio.create(mediaData.path)
+      filePath = await this.createVideoFromAudio.create(mediaData.path)
     }
 
     await this.authenticate()
@@ -54,7 +55,7 @@ export class SubtitleYoutubeApiService implements CreateSubtitleService {
         }
       },
       media: {
-        body: fs.createReadStream(mediaData.path)
+        body: fs.createReadStream(filePath || mediaData.path)
       }
     }
 
