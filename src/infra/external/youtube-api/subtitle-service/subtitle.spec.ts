@@ -43,6 +43,7 @@ jest.mock('fs', () => {
   }
 })
 
+import fs from 'fs'
 import { google } from 'googleapis'
 import { OAuth2Client } from 'google-auth-library'
 import { SubtitleYoutubeApiService } from './subtitle'
@@ -90,7 +91,6 @@ const makeSut = (): SutTypes => {
     OAuthClient
   }
 }
-
 describe('SubtitleYoutubeApiService', () => {
   test('Should not call CreateVideoFromAudio if file mimetype not refers to an audio', async () => {
     const { sut, createVideoFromAudioStub } = makeSut()
@@ -132,5 +132,33 @@ describe('SubtitleYoutubeApiService', () => {
       version: 'v3',
       auth: OAuthClient
     })
+  })
+
+  test('Should call youtube insert with correct values', async () => {
+    const { sut } = makeSut()
+
+    const mediaData = makeMediaData()
+    const insertParams = {
+      part: ['id', 'snippet', 'status'],
+      notifySubscribers: false,
+      requestBody: {
+        snippet: {
+          title: mediaData.filename,
+          description: mediaData.filename,
+          defaultLanguage: mediaData.language,
+          defaultAudioLanguage: mediaData.language
+        },
+        status: {
+          privacyStatus: 'private'
+        }
+      },
+      media: {
+        body: fs.createReadStream(mediaData.path)
+      }
+    }
+
+    await sut.create(mediaData)
+
+    expect(mockInsert).toHaveBeenCalledWith(insertParams)
   })
 })
