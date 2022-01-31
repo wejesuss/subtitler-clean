@@ -1,9 +1,14 @@
-import { SubtitleYoutubeApiService } from './subtitle'
-import { CreateVideoFromAudioStorage } from '../../../../data/protocols/create-video-from-audio-storage'
-import { CreateSubtitleModel } from '../../../../data/protocols/create-subtitle-service'
-import { google } from 'googleapis'
-import { OAuth2Client } from 'google-auth-library'
-
+/* eslint-disable import/first */
+const mockYoutube = jest.fn().mockImplementation(() => {
+  return {
+    videos: {
+      insert: mockInsert
+    }
+  }
+})
+const mockInsert = jest.fn().mockImplementation((params) => {
+  return {}
+})
 const mockGenerateAuthUrl = jest.fn().mockImplementation(() => {
   return 'auth_url'
 })
@@ -14,6 +19,7 @@ let mockCredentials = {}
 const mockSetCredentials = jest.fn().mockImplementation((credentials) => {
   mockCredentials = credentials
 })
+
 jest.mock('googleapis', () => {
   return {
     google: {
@@ -27,15 +33,7 @@ jest.mock('googleapis', () => {
           }
         })
       },
-      youtube: jest.fn().mockImplementation(() => {
-        return {
-          videos: {
-            insert: jest.fn().mockImplementation((params) => {
-              return {}
-            })
-          }
-        }
-      })
+      youtube: mockYoutube
     }
   }
 })
@@ -44,6 +42,12 @@ jest.mock('fs', () => {
     createReadStream: jest.fn()
   }
 })
+
+import { google } from 'googleapis'
+import { OAuth2Client } from 'google-auth-library'
+import { SubtitleYoutubeApiService } from './subtitle'
+import { CreateVideoFromAudioStorage } from '../../../../data/protocols/create-video-from-audio-storage'
+import { CreateSubtitleModel } from '../../../../data/protocols/create-subtitle-service'
 
 const makeMediaData = (): CreateSubtitleModel => ({
   mimetype: 'any_mimetype',
@@ -62,33 +66,31 @@ const makeCreateVideoFromAudio = (): CreateVideoFromAudioStorage => {
   return new CreateVideoFromAudioStub()
 }
 
-interface OAuthTypes {
-  OAuthClient: OAuth2Client
-}
-
-const makeOAuthClient = (): OAuthTypes => {
+const makeOAuthClient = (): OAuth2Client => {
   const OAuthClient = new google.auth.OAuth2()
   OAuthClient.generateAuthUrl()
 
-  return { OAuthClient }
+  return OAuthClient
 }
 
 interface SutTypes {
   sut: SubtitleYoutubeApiService
   createVideoFromAudioStub: CreateVideoFromAudioStorage
+  OAuthClient: OAuth2Client
 }
 
 const makeSut = (): SutTypes => {
   const createVideoFromAudioStub = makeCreateVideoFromAudio()
-  const { OAuthClient } = makeOAuthClient()
+  const OAuthClient = makeOAuthClient()
   const sut = new SubtitleYoutubeApiService(createVideoFromAudioStub, OAuthClient)
 
   return {
     sut,
-    createVideoFromAudioStub
-
+    createVideoFromAudioStub,
+    OAuthClient
   }
 }
+
 describe('SubtitleYoutubeApiService', () => {
   test('Should not call CreateVideoFromAudio if file mimetype not refers to an audio', async () => {
     const { sut, createVideoFromAudioStub } = makeSut()
@@ -119,5 +121,16 @@ describe('SubtitleYoutubeApiService', () => {
 
     expect(mockGetAccessToken).toHaveBeenCalledTimes(1)
     expect(mockSetCredentials).toHaveBeenCalledTimes(1)
+  })
+
+  test('Should create youtube service object before sending file', async () => {
+    const { sut, OAuthClient } = makeSut()
+
+    await sut.create(makeMediaData())
+
+    expect(mockYoutube).toHaveBeenCalledWith({
+      version: 'v3',
+      auth: OAuthClient
+    })
   })
 })
