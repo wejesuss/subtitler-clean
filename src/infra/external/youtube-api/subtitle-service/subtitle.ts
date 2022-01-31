@@ -1,3 +1,4 @@
+import { google } from 'googleapis'
 import {
   CreateSubtitleService,
   CreateSubtitleModel
@@ -31,6 +32,11 @@ export class SubtitleYoutubeApiService implements CreateSubtitleService {
     }
 
     await this.authenticate()
+
+    google.youtube({
+      version: 'v3',
+      auth: this.OAuthClient
+    })
 
     return await new Promise((resolve) => resolve(null))
   }
