@@ -137,6 +137,18 @@ describe('SubtitleYoutubeApiService', () => {
     expect(createVideoSpy).toHaveBeenCalledWith('any_path')
   })
 
+  test('Should throw if CreateVideoFromAudio throws', async () => {
+    const { sut, createVideoFromAudioStub } = makeSut()
+    jest.spyOn(String.prototype, 'includes').mockReturnValueOnce(true)
+    jest.spyOn(createVideoFromAudioStub, 'create').mockImplementationOnce(async () => {
+      throw new Error()
+    })
+
+    const promise = sut.create(makeMediaData())
+
+    await expect(promise).rejects.toThrow()
+  })
+
   test('Should authenticate before sending file', async () => {
     const { sut } = makeSut()
 
