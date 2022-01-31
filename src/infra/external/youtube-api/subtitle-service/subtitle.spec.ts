@@ -207,6 +207,16 @@ describe('SubtitleYoutubeApiService', () => {
     expect(mockInsert).toHaveBeenCalledWith(insertParams)
   })
 
+  test('Should throw if youtube insert throws', async () => {
+    const { sut } = makeSut()
+    mockInsert.mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const promise = sut.create(makeMediaData())
+    await expect(promise).rejects.toThrow()
+  })
+
   test('Should return video id on success', async () => {
     const { sut } = makeSut()
 
