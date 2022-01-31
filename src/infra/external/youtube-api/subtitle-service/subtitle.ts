@@ -1,4 +1,5 @@
-import { google } from 'googleapis'
+import fs from 'fs'
+import { google, youtube_v3 } from 'googleapis'
 import {
   CreateSubtitleService,
   CreateSubtitleModel
@@ -33,10 +34,31 @@ export class SubtitleYoutubeApiService implements CreateSubtitleService {
 
     await this.authenticate()
 
-    google.youtube({
+    const youtube = google.youtube({
       version: 'v3',
       auth: this.OAuthClient
     })
+
+    const insertParams: youtube_v3.Params$Resource$Videos$Insert = {
+      part: ['id', 'snippet', 'status'],
+      notifySubscribers: false,
+      requestBody: {
+        snippet: {
+          title: mediaData.filename,
+          description: mediaData.filename,
+          defaultLanguage: mediaData.language,
+          defaultAudioLanguage: mediaData.language
+        },
+        status: {
+          privacyStatus: 'private'
+        }
+      },
+      media: {
+        body: fs.createReadStream(mediaData.path)
+      }
+    }
+
+    await youtube.videos.insert(insertParams)
 
     return await new Promise((resolve) => resolve(null))
   }
