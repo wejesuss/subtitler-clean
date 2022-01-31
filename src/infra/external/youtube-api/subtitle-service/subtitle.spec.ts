@@ -186,6 +186,16 @@ describe('SubtitleYoutubeApiService', () => {
     })
   })
 
+  test('Should throw if google.youtube throws', async () => {
+    const { sut } = makeSut()
+    mockYoutube.mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const promise = sut.create(makeMediaData())
+    await expect(promise).rejects.toThrow()
+  })
+
   test('Should call youtube insert with correct values', async () => {
     const { sut } = makeSut()
 
