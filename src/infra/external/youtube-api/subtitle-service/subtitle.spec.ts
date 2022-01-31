@@ -1,13 +1,17 @@
 /* eslint-disable import/first */
+const mockInsert = jest.fn().mockImplementation(async (params) => {
+  return await new Promise((resolve) => resolve({
+    data: {
+      id: 'valid_video_id'
+    }
+  }))
+})
 const mockYoutube = jest.fn().mockImplementation(() => {
   return {
     videos: {
       insert: mockInsert
     }
   }
-})
-const mockInsert = jest.fn().mockImplementation((params) => {
-  return {}
 })
 const mockGenerateAuthUrl = jest.fn().mockImplementation(() => {
   return 'auth_url'
@@ -162,5 +166,15 @@ describe('SubtitleYoutubeApiService', () => {
     await sut.create(mediaData)
 
     expect(mockInsert).toHaveBeenCalledWith(insertParams)
+  })
+
+  test('Should return video id on success', async () => {
+    const { sut } = makeSut()
+
+    const mediaData = makeMediaData()
+
+    const id = await sut.create(mediaData)
+
+    expect(id).toBe('valid_video_id')
   })
 })
