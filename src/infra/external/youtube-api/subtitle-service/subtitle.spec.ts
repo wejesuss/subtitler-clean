@@ -23,6 +23,7 @@ let mockCredentials = {}
 const mockSetCredentials = jest.fn().mockImplementation((credentials) => {
   mockCredentials = credentials
 })
+const mockCreateReadStream = jest.fn()
 
 jest.mock('googleapis', () => {
   return {
@@ -43,7 +44,7 @@ jest.mock('googleapis', () => {
 })
 jest.mock('fs', () => {
   return {
-    createReadStream: jest.fn()
+    createReadStream: mockCreateReadStream
   }
 })
 
@@ -231,7 +232,7 @@ describe('SubtitleYoutubeApiService', () => {
     await sut.create(mediaData)
 
     expect(mockInsert).toHaveBeenCalledWith(insertParams)
-    expect(fs.createReadStream).toHaveBeenNthCalledWith(2, 'any_video_path')
+    expect(mockCreateReadStream).toHaveBeenNthCalledWith(2, 'any_video_path')
   })
 
   test('Should return video id on success', async () => {
