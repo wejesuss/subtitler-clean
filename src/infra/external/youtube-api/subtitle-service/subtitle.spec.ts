@@ -44,7 +44,7 @@ jest.mock('fs', () => {
 })
 
 import fs from 'fs'
-import { google } from 'googleapis'
+import { google, youtube_v3 } from 'googleapis'
 import { OAuth2Client } from 'google-auth-library'
 import { SubtitleYoutubeApiService } from './subtitle'
 import { CreateVideoFromAudioStorage } from '../../../../data/protocols/create-video-from-audio-storage'
@@ -55,6 +55,25 @@ const makeMediaData = (): CreateSubtitleModel => ({
   language: 'any_language',
   filename: 'any_filename',
   path: 'any_path'
+})
+
+const makeFakeInsertParams = (mediaData: CreateSubtitleModel): youtube_v3.Params$Resource$Videos$Insert => ({
+  part: ['id', 'snippet', 'status'],
+  notifySubscribers: false,
+  requestBody: {
+    snippet: {
+      title: mediaData.filename,
+      description: mediaData.filename,
+      defaultLanguage: mediaData.language,
+      defaultAudioLanguage: mediaData.language
+    },
+    status: {
+      privacyStatus: 'private'
+    }
+  },
+  media: {
+    body: fs.createReadStream(mediaData.path)
+  }
 })
 
 const makeCreateVideoFromAudio = (): CreateVideoFromAudioStorage => {
@@ -138,24 +157,7 @@ describe('SubtitleYoutubeApiService', () => {
     const { sut } = makeSut()
 
     const mediaData = makeMediaData()
-    const insertParams = {
-      part: ['id', 'snippet', 'status'],
-      notifySubscribers: false,
-      requestBody: {
-        snippet: {
-          title: mediaData.filename,
-          description: mediaData.filename,
-          defaultLanguage: mediaData.language,
-          defaultAudioLanguage: mediaData.language
-        },
-        status: {
-          privacyStatus: 'private'
-        }
-      },
-      media: {
-        body: fs.createReadStream(mediaData.path)
-      }
-    }
+    const insertParams = makeFakeInsertParams(mediaData)
 
     await sut.create(mediaData)
 
