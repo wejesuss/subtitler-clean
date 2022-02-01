@@ -8,7 +8,6 @@ export class DbGetSubtitle implements GetSubtitle {
   }
 
   async get (fileId: string): Promise<SubtitleModel> {
-    await this.getSubtitleRepository.get(fileId)
-    return await new Promise((resolve) => resolve(null))
+    return await this.getSubtitleRepository.get(fileId)
   }
 }
