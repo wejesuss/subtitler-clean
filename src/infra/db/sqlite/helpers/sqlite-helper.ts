@@ -66,6 +66,20 @@ export const SQLiteHelper = {
     await run(`DELETE FROM ${collection}`)
   },
 
+  mapBoolean (field: string, data: any): any {
+    return Object.entries(data).reduce((prev, current) => {
+      let [key, value] = current
+
+      if (key === field) {
+        value = !!value
+      }
+
+      prev[key] = value
+
+      return prev
+    }, {})
+  },
+
   async getCollection (collection: Collections): Promise<any> {
     const isConnected = await this.isConnected()
     if (!isConnected) {

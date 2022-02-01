@@ -19,8 +19,12 @@ export class SubtitleSQLiteRepository implements AddSubtitleRepository, GetSubti
   }
 
   async get (fileId: string): Promise<SubtitleModel> {
-    await SQLiteHelper.getOneWhere('subtitles', { fieldName: 'file_id', id: fileId })
+    const subtitle = await SQLiteHelper.getOneWhere('subtitles', { fieldName: 'file_id', id: fileId })
 
-    return await new Promise((resolve) => resolve(null))
+    if (subtitle) {
+      return SQLiteHelper.mapBoolean('sent_to_creation', subtitle)
+    }
+
+    return subtitle
   }
 }
