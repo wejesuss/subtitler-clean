@@ -73,4 +73,12 @@ describe('Subtitle SQLite Repository', () => {
 
     expect(SQLiteHelperSpy).toHaveBeenCalledWith(collectionName, { fieldName: 'file_id', id: fileData.id })
   })
+
+  test('Should return falsy if subtitle does not exist', async () => {
+    const sut = makeSut()
+
+    const subtitle = await sut.get('any_id')
+
+    expect(subtitle).toBeFalsy()
+  })
 })
