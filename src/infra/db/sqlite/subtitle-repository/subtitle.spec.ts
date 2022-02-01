@@ -51,7 +51,7 @@ describe('Subtitle SQLite Repository', () => {
     expect(SQLiteHelperSpy).toHaveBeenCalledWith(collectionName, makeFakeAddSubtitleModel())
   })
 
-  test('Should return subtitle on success', async () => {
+  test('Should return created subtitle on success', async () => {
     const sut = makeSut()
     const subtitle = await sut.add(makeFakeFileData())
 
