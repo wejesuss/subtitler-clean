@@ -62,4 +62,15 @@ describe('Subtitle SQLite Repository', () => {
     expect(subtitle.sent_to_creation).toBe(true)
     expect(subtitle.external_id).toBe('any_external_id')
   })
+
+  test('Should call SQLiteHelper.getOneWhere with correct values', async () => {
+    const sut = makeSut()
+    const SQLiteHelperSpy = jest.spyOn(SQLiteHelper, 'getOneWhere')
+    const fileData = makeFakeFileData()
+
+    await sut.add(fileData)
+    await sut.get(fileData.id)
+
+    expect(SQLiteHelperSpy).toHaveBeenCalledWith(collectionName, { fieldName: 'file_id', id: fileData.id })
+  })
 })
