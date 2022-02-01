@@ -45,4 +45,15 @@ describe('DbGetSubtitle Usecase', () => {
 
     expect(getSubtitleSpy).toHaveBeenCalledWith(id)
   })
+
+  test('Should throw if GetSubtitleRepository throws', async () => {
+    const { sut, getSubtitleRepositoryStub } = makeSut()
+    jest.spyOn(getSubtitleRepositoryStub, 'get').mockImplementationOnce(async () => {
+      throw new Error()
+    })
+
+    const promise = sut.get('valid_id')
+
+    await expect(promise).rejects.toThrow()
+  })
 })
