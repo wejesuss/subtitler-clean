@@ -31,6 +31,13 @@ describe('SQLiteHelper', () => {
 
     expect(file).toBeFalsy()
   })
+
+  test('getOneWhere should return falsy if data is not found', async () => {
+    await sut.deleteAll('subtitles')
+    const file = await sut.getOneWhere('subtitles', { fieldName: 'file_id', id: 'any_id' })
+
+    expect(file).toBeFalsy()
+  })
 })
 
 describe('SQLiteHelper', () => {
