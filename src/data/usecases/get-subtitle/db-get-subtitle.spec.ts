@@ -65,4 +65,12 @@ describe('DbGetSubtitle Usecase', () => {
 
     expect(subtitle).toBeFalsy()
   })
+
+  test('Should return a subtitle on success', async () => {
+    const { sut } = makeSut()
+
+    const subtitle = await sut.get('valid_id')
+
+    expect(subtitle).toEqual(makeFakeSubtitle())
+  })
 })
