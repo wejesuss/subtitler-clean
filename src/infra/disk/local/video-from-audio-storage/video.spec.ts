@@ -22,6 +22,7 @@ const makeSut = (): CreateVideoLocalStorage => {
 
 const inputImage = path.resolve(__dirname, 'input.jpg')
 const audioPath = path.resolve(__dirname, 'test.mp3')
+
 describe('Create Video LocalStorage', () => {
   test('Should throw on failure', async () => {
     const createVideoLocalStorage = makeSut()
@@ -34,6 +35,21 @@ describe('Create Video LocalStorage', () => {
     const promise = createVideoLocalStorage.create(audioPath)
 
     await expect(promise).rejects.toEqual(new Error())
+    expect(execSpy).toHaveBeenCalledWith(makeFakeCommand(inputImage, audioPath), {}, expect.anything())
+  })
+
+  test('Should save video to disk on success', async () => {
+    const createVideoLocalStorage = makeSut()
+    jest.spyOn(Buffer.prototype, 'toString').mockReturnValueOnce('abcdef')
+    const execSpy = jest.spyOn(childProcess, 'exec').mockImplementationOnce((_command, _options, callback) => {
+      callback(null, '', '')
+      return null
+    })
+
+    const videoPath = path.resolve(__dirname, 'test-abcdef.mp4')
+    const promise = createVideoLocalStorage.create(audioPath)
+
+    await expect(promise).resolves.toBe(videoPath)
     expect(execSpy).toHaveBeenCalledWith(makeFakeCommand(inputImage, audioPath), {}, expect.anything())
   })
 })
