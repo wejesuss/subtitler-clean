@@ -71,6 +71,6 @@ describe('DbGetFile Usecase', () => {
 
     const file = await sut.get('valid_id')
 
-    expect(file).toBeTruthy()
+    expect(file).toEqual(makeFakeFile())
   })
 })
