@@ -76,4 +76,13 @@ describe('SQLiteHelper', () => {
     expect(connectSpy).toHaveBeenCalled()
     await sut.disconnect()
   })
+
+  test('Should call getOneWhere reconnecting', async () => {
+    expect(sut.client).toBeNull()
+    const connectSpy = jest.spyOn(sut, 'connect')
+    await sut.getOneWhere('subtitles', { fieldName: 'file_id', id: 'any_id' })
+
+    expect(connectSpy).toHaveBeenCalled()
+    await sut.disconnect()
+  })
 })
