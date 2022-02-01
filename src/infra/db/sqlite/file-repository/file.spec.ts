@@ -60,6 +60,14 @@ describe('File SQLite Repository', () => {
     expect(SQLiteHelperSpy).toHaveBeenCalledWith(collectionName, file.id)
   })
 
+  test('Should return falsy if file does not exist', async () => {
+    const sut = makeSut()
+
+    const file = await sut.get('any_id')
+
+    expect(file).toBeFalsy()
+  })
+
   test('Should get file on success', async () => {
     const sut = makeSut()
     let file = await sut.add(makeFakeFileData())
