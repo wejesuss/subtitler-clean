@@ -107,5 +107,18 @@ export const SQLiteHelper = {
     if (!data) return null
 
     return data
+  },
+
+  async getOneWhere (collection: Collections, { fieldName, id }: { fieldName: string, id: string}): Promise<any> {
+    const isConnected = await this.isConnected()
+    if (!isConnected) {
+      await this.connect(this.filename)
+    }
+
+    const get = promisify(this.client.get.bind(this.client))
+    const data = await get(`SELECT * FROM ${collection} WHERE ${fieldName} = ?`, id)
+    if (!data) return null
+
+    return data
   }
 }
