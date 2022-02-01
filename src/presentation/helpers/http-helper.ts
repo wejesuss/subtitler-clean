@@ -8,6 +8,13 @@ export const badRequest = (error: Error): HttpResponse => {
   }
 }
 
+export const notFound = (error: Error): HttpResponse => {
+  return {
+    statusCode: 404,
+    body: error
+  }
+}
+
 export const internalServerError = (error: Error): HttpResponse => {
   return {
     statusCode: 500,

@@ -24,6 +24,20 @@ describe('SQLiteHelper', () => {
     files = await sut.getCollection('files')
     expect(files).toBeTruthy()
   })
+
+  test('getOne should return falsy if data is not found', async () => {
+    await sut.deleteAll('files')
+    const file = await sut.getOne('files', 'any_id')
+
+    expect(file).toBeFalsy()
+  })
+
+  test('getOneWhere should return falsy if data is not found', async () => {
+    await sut.deleteAll('subtitles')
+    const file = await sut.getOneWhere('subtitles', { fieldName: 'file_id', id: 'any_id' })
+
+    expect(file).toBeFalsy()
+  })
 })
 
 describe('SQLiteHelper', () => {
@@ -56,6 +70,24 @@ describe('SQLiteHelper', () => {
     expect(sut.client).toBeNull()
     const connectSpy = jest.spyOn(sut, 'connect')
     await sut.insertOne('files', {})
+
+    expect(connectSpy).toHaveBeenCalled()
+    await sut.disconnect()
+  })
+
+  test('Should call getOne reconnecting', async () => {
+    expect(sut.client).toBeNull()
+    const connectSpy = jest.spyOn(sut, 'connect')
+    await sut.getOne('files', 'any_id')
+
+    expect(connectSpy).toHaveBeenCalled()
+    await sut.disconnect()
+  })
+
+  test('Should call getOneWhere reconnecting', async () => {
+    expect(sut.client).toBeNull()
+    const connectSpy = jest.spyOn(sut, 'connect')
+    await sut.getOneWhere('subtitles', { fieldName: 'file_id', id: 'any_id' })
 
     expect(connectSpy).toHaveBeenCalled()
     await sut.disconnect()
