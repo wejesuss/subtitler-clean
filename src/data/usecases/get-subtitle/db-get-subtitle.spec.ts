@@ -56,4 +56,13 @@ describe('DbGetSubtitle Usecase', () => {
 
     await expect(promise).rejects.toThrow()
   })
+
+  test('Should return falsy if subtitle is not found', async () => {
+    const { sut, getSubtitleRepositoryStub } = makeSut()
+    jest.spyOn(getSubtitleRepositoryStub, 'get').mockReturnValueOnce(new Promise((resolve) => resolve(null)))
+
+    const subtitle = await sut.get('valid_id')
+
+    expect(subtitle).toBeFalsy()
+  })
 })
