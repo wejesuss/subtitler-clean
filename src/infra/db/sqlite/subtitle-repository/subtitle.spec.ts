@@ -81,4 +81,19 @@ describe('Subtitle SQLite Repository', () => {
 
     expect(subtitle).toBeFalsy()
   })
+
+  test('Should get subtitle on success', async () => {
+    const sut = makeSut()
+    const fileData = makeFakeFileData()
+    let subtitle = await sut.add(fileData)
+
+    subtitle = await sut.get(fileData.id)
+
+    expect(subtitle).toBeTruthy()
+    expect(subtitle.id).toBeTruthy()
+    expect(subtitle.language).toBe('any_language')
+    expect(subtitle.file_id).toBe('any_id')
+    expect(subtitle.sent_to_creation).toBe(true)
+    expect(subtitle.external_id).toBe('any_external_id')
+  })
 })
