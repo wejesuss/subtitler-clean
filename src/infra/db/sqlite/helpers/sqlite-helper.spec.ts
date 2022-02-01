@@ -24,6 +24,13 @@ describe('SQLiteHelper', () => {
     files = await sut.getCollection('files')
     expect(files).toBeTruthy()
   })
+
+  test('getOne should return falsy if data is not found', async () => {
+    await sut.deleteAll('files')
+    const file = await sut.getOne('files', 'any_id')
+
+    expect(file).toBeFalsy()
+  })
 })
 
 describe('SQLiteHelper', () => {
