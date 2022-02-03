@@ -244,4 +244,13 @@ describe('SubtitleYoutubeApiService', () => {
 
     expect(id).toBe('valid_video_id')
   })
+
+  test('Should authenticate before downloading captions', async () => {
+    const { sut } = makeSut()
+
+    await sut.download('any_id')
+
+    expect(mockGetAccessToken).toHaveBeenCalledTimes(1)
+    expect(mockSetCredentials).toHaveBeenCalledTimes(1)
+  })
 })
