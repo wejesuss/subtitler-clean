@@ -1,6 +1,4 @@
-import { DownloadSubtitle } from '../../../domain/usecases/download-subtitle'
-import { CaptionModel } from '../../../domain/models/caption'
-import { DownloadSubtitleService } from '../../protocols/download-subtitle-service'
+import { DownloadSubtitle, CaptionModel, DownloadSubtitleService } from './external-download-subtitle-protocols'
 
 export class ExternalDownloadSubtitle implements DownloadSubtitle {
   private readonly downloadSubtitleService: DownloadSubtitleService

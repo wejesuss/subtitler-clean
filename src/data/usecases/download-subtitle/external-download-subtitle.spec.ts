@@ -1,5 +1,4 @@
-import { CaptionModel } from '../../../domain/models/caption'
-import { DownloadSubtitleService } from '../../protocols/download-subtitle-service'
+import { CaptionModel, DownloadSubtitleService } from './external-download-subtitle-protocols'
 import { ExternalDownloadSubtitle } from './external-download-subtitle'
 
 const makeFakeCaptionModel = (): CaptionModel => ({
