@@ -1,5 +1,5 @@
 import { DownloadSubtitleController } from './download-subtitle'
-import { HttpRequest, GetSubtitle, SubtitleModel } from './download-subtitle-protocols'
+import { HttpRequest, GetSubtitle, SubtitleModel, CaptionModel, DownloadSubtitle } from './download-subtitle-protocols'
 import { badRequest, internalServerError, notFound } from '../../helpers/http-helper'
 import { MissingParamError, NotFoundError, ServerError } from '../../errors'
 
@@ -17,6 +17,11 @@ const makeFakeSubtitleModel = (): SubtitleModel => ({
   external_id: 'any_external_id'
 })
 
+const makeFakeCaptionModel = (): CaptionModel => ({
+  isReady: true,
+  captions: 'any_timed_captions'
+})
+
 const makeGetSubtitle = (): GetSubtitle => {
   class GetSubtitleStub implements GetSubtitle {
     async get (fileId: string): Promise<SubtitleModel> {
@@ -27,18 +32,31 @@ const makeGetSubtitle = (): GetSubtitle => {
   return new GetSubtitleStub()
 }
 
+const makeDownloadSubtitle = (): DownloadSubtitle => {
+  class DownloadSubtitleStub implements DownloadSubtitle {
+    async download (externalId: string): Promise<CaptionModel> {
+      return await new Promise((resolve) => resolve(makeFakeCaptionModel()))
+    }
+  }
+
+  return new DownloadSubtitleStub()
+}
+
 interface SutTypes {
   sut: DownloadSubtitleController
   getSubtitleStub: GetSubtitle
+  downloadSubtitleStub: DownloadSubtitle
 }
 
 const makeSut = (): SutTypes => {
   const getSubtitleStub = makeGetSubtitle()
-  const sut = new DownloadSubtitleController(getSubtitleStub)
+  const downloadSubtitleStub = makeDownloadSubtitle()
+  const sut = new DownloadSubtitleController(getSubtitleStub, downloadSubtitleStub)
 
   return {
     sut,
-    getSubtitleStub
+    getSubtitleStub,
+    downloadSubtitleStub
   }
 }
 
@@ -79,5 +97,14 @@ describe('Download Subtitle Controller', () => {
     const httpResponse = await sut.handle(makeFakeHttpRequest())
 
     expect(httpResponse).toEqual(internalServerError(new ServerError(null)))
+  })
+
+  test('Should call DownloadSubtitle with correct value', async () => {
+    const { sut, downloadSubtitleStub } = makeSut()
+    const downloadSubtitleSpy = jest.spyOn(downloadSubtitleStub, 'download')
+
+    await sut.handle(makeFakeHttpRequest())
+
+    expect(downloadSubtitleSpy).toHaveBeenCalledWith('any_external_id')
   })
 })
