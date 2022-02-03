@@ -118,4 +118,13 @@ describe('Download Subtitle Controller', () => {
 
     expect(httpResponse).toEqual(internalServerError(new ServerError(null)))
   })
+
+  test('Should return 404 if DownloadSubtitle returns falsy', async () => {
+    const { sut, downloadSubtitleStub } = makeSut()
+    jest.spyOn(downloadSubtitleStub, 'download').mockReturnValueOnce(new Promise((resolve) => resolve(null)))
+
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse).toEqual(notFound(new NotFoundError('captions')))
+  })
 })
