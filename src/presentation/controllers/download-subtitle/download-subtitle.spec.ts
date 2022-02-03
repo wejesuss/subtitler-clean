@@ -1,6 +1,13 @@
 import { DownloadSubtitleController } from './download-subtitle'
 import { GetSubtitle } from '../../../domain/usecases/get-subtitle'
 import { SubtitleModel } from '../../../domain/models/subtitle'
+import { HttpRequest } from '../../protocols'
+
+const makeFakeHttpRequest = (): HttpRequest => ({
+  body: {
+    id: 'any_file_id'
+  }
+})
 
 const makeFakeSubtitleModel = (): SubtitleModel => ({
   id: 'any_id',
@@ -40,11 +47,7 @@ describe('Download Subtitle Controller', () => {
     const { sut, getSubtitleStub } = makeSut()
     const getSubtitleSpy = jest.spyOn(getSubtitleStub, 'get')
 
-    await sut.handle({
-      body: {
-        id: 'any_file_id'
-      }
-    })
+    await sut.handle(makeFakeHttpRequest())
 
     expect(getSubtitleSpy).toHaveBeenCalledWith('any_file_id')
   })
