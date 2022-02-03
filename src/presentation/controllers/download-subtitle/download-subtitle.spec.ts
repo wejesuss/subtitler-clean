@@ -1,6 +1,6 @@
 import { DownloadSubtitleController } from './download-subtitle'
-import { HttpRequest, GetSubtitle, SubtitleModel, CaptionModel, DownloadSubtitle } from './download-subtitle-protocols'
-import { accepted, badRequest, internalServerError, notFound } from '../../helpers/http-helper'
+import { HttpRequest, GetSubtitle, SubtitleModel, CaptionModel, DownloadSubtitle, HttpResponse } from './download-subtitle-protocols'
+import { accepted, badRequest, internalServerError, notFound, ok } from '../../helpers/http-helper'
 import { MissingParamError, NotFoundError, NotReadyError, ServerError } from '../../errors'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
@@ -8,6 +8,12 @@ const makeFakeHttpRequest = (): HttpRequest => ({
     id: 'any_file_id'
   }
 })
+
+const makeFakeHttpResponse = (): HttpResponse => {
+  return ok({
+    captions: 'any_timed_captions'
+  })
+}
 
 const makeFakeSubtitleModel = (): SubtitleModel => ({
   id: 'any_id',
@@ -138,5 +144,13 @@ describe('Download Subtitle Controller', () => {
     const httpResponse = await sut.handle(makeFakeHttpRequest())
 
     expect(httpResponse).toEqual(accepted(new NotReadyError('captions')))
+  })
+
+  test('Should return 200 is everything is fine', async () => {
+    const { sut } = makeSut()
+
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse).toEqual(makeFakeHttpResponse())
   })
 })
