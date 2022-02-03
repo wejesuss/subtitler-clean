@@ -107,4 +107,15 @@ describe('Download Subtitle Controller', () => {
 
     expect(downloadSubtitleSpy).toHaveBeenCalledWith('any_external_id')
   })
+
+  test('Should return 500 if DownloadSubtitle throws', async () => {
+    const { sut, downloadSubtitleStub } = makeSut()
+    jest.spyOn(downloadSubtitleStub, 'download').mockImplementationOnce(async () => {
+      throw new Error('')
+    })
+
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse).toEqual(internalServerError(new ServerError(null)))
+  })
 })
