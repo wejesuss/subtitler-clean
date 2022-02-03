@@ -270,4 +270,15 @@ describe('SubtitleYoutubeApiService', () => {
     promise = sut.download('any_id')
     await expect(promise).rejects.toThrow()
   })
+
+  test('Should create youtube service object before downloading captions', async () => {
+    const { sut, OAuthClient } = makeSut()
+
+    await sut.download('any_id')
+
+    expect(mockYoutube).toHaveBeenCalledWith({
+      version: 'v3',
+      auth: OAuthClient
+    })
+  })
 })
