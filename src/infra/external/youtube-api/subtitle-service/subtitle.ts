@@ -85,10 +85,15 @@ export class SubtitleYoutubeApiService implements CreateSubtitleService, Downloa
     }
 
     if (!caption.snippet.isDraft && caption.snippet.status === 'serving') {
-      await youtube.captions.download({
+      const { data: captions } = await youtube.captions.download({
         id: caption.id,
         tfmt: 'srt'
       })
+
+      return {
+        isReady: true,
+        captions: String(captions)
+      }
     }
   }
 }
