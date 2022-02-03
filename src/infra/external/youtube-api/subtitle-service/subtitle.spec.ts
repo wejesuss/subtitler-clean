@@ -6,10 +6,26 @@ const mockInsert = jest.fn().mockImplementation(async (params) => {
     }
   }))
 })
+
+const mockCaptionsList = jest.fn().mockImplementation(async (params) => {
+  return await new Promise((resolve) => resolve({
+    data: {
+      id: 'valid_caption_id',
+      items: [{
+        isDraft: false,
+        status: 'serving'
+      }]
+    }
+  }))
+})
+
 const mockYoutube = jest.fn().mockImplementation(() => {
   return {
     videos: {
       insert: mockInsert
+    },
+    captions: {
+      list: mockCaptionsList
     }
   }
 })
@@ -290,5 +306,19 @@ describe('SubtitleYoutubeApiService', () => {
 
     const promise = sut.download('any_id')
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call youtube captions list with correct values', async () => {
+    const { sut } = makeSut()
+
+    const id = 'any_id'
+    const captionsListParams = {
+      part: ['id', 'snippet'],
+      videoId: id
+    }
+
+    await sut.download(id)
+
+    expect(mockCaptionsList).toHaveBeenCalledWith(captionsListParams)
   })
 })
