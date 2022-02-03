@@ -421,4 +421,15 @@ describe('SubtitleYoutubeApiService', () => {
 
     expect(mockCaptionsDownload).toHaveBeenCalledTimes(0)
   })
+
+  test('Should return captions on success', async () => {
+    const { sut } = makeSut()
+
+    const caption = await sut.download('any_id')
+
+    expect(caption).toEqual({
+      isReady: true,
+      captions: 'any_timed_captions'
+    })
+  })
 })
