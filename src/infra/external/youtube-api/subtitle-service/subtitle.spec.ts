@@ -1,22 +1,30 @@
 /* eslint-disable import/first */
 const mockInsert = jest.fn().mockImplementation(async (params) => {
-  return await new Promise((resolve) => resolve({
-    data: {
-      id: 'valid_video_id'
-    }
-  }))
+  return await new Promise((resolve) =>
+    resolve({
+      data: {
+        id: 'valid_video_id'
+      }
+    })
+  )
 })
 
 const mockCaptionsList = jest.fn().mockImplementation(async (params) => {
-  return await new Promise((resolve) => resolve({
-    data: {
-      id: 'valid_caption_id',
-      items: [{
-        isDraft: false,
-        status: 'serving'
-      }]
-    }
-  }))
+  return await new Promise((resolve) =>
+    resolve({
+      data: {
+        items: [
+          {
+            id: 'valid_caption_id',
+            snippet: {
+              isDraft: false,
+              status: 'serving'
+            }
+          }
+        ]
+      }
+    })
+  )
 })
 
 const mockYoutube = jest.fn().mockImplementation(() => {
@@ -78,7 +86,9 @@ const makeMediaData = (): CreateSubtitleModel => ({
   path: 'any_path'
 })
 
-const makeFakeInsertParams = (mediaData: CreateSubtitleModel): youtube_v3.Params$Resource$Videos$Insert => ({
+const makeFakeInsertParams = (
+  mediaData: CreateSubtitleModel
+): youtube_v3.Params$Resource$Videos$Insert => ({
   part: ['id', 'snippet', 'status'],
   notifySubscribers: false,
   requestBody: {
@@ -123,7 +133,10 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
   const createVideoFromAudioStub = makeCreateVideoFromAudio()
   const OAuthClient = makeOAuthClient()
-  const sut = new SubtitleYoutubeApiService(createVideoFromAudioStub, OAuthClient)
+  const sut = new SubtitleYoutubeApiService(
+    createVideoFromAudioStub,
+    OAuthClient
+  )
 
   return {
     sut,
@@ -146,7 +159,9 @@ describe('SubtitleYoutubeApiService', () => {
   test('Should call CreateVideoFromAudio if file mimetype refers to an audio', async () => {
     const { sut, createVideoFromAudioStub } = makeSut()
     const createVideoSpy = jest.spyOn(createVideoFromAudioStub, 'create')
-    const includesSpy = jest.spyOn(String.prototype, 'includes').mockReturnValueOnce(true)
+    const includesSpy = jest
+      .spyOn(String.prototype, 'includes')
+      .mockReturnValueOnce(true)
 
     await sut.create(makeMediaData())
 
@@ -157,9 +172,11 @@ describe('SubtitleYoutubeApiService', () => {
   test('Should throw if CreateVideoFromAudio throws', async () => {
     const { sut, createVideoFromAudioStub } = makeSut()
     jest.spyOn(String.prototype, 'includes').mockReturnValueOnce(true)
-    jest.spyOn(createVideoFromAudioStub, 'create').mockImplementationOnce(async () => {
-      throw new Error()
-    })
+    jest
+      .spyOn(createVideoFromAudioStub, 'create')
+      .mockImplementationOnce(async () => {
+        throw new Error()
+      })
 
     const promise = sut.create(makeMediaData())
 
@@ -332,5 +349,19 @@ describe('SubtitleYoutubeApiService', () => {
     const promise = sut.download(id)
 
     await expect(promise).rejects.toThrow()
+  })
+
+  test('Should return falsy if no caption is found', async () => {
+    const { sut } = makeSut()
+    mockCaptionsList.mockReturnValueOnce(new Promise((resolve) => resolve({
+      data: {
+        items: []
+      }
+    })))
+
+    const id = 'any_id'
+    const caption = await sut.download(id)
+
+    expect(caption).toBeFalsy()
   })
 })
