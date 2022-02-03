@@ -1,3 +1,5 @@
+import { NotFoundError } from '../../errors'
+import { notFound } from '../../helpers/http-helper'
 import { Controller, HttpRequest, HttpResponse, GetSubtitle } from './download-subtitle-protocols'
 
 export class DownloadSubtitleController implements Controller {
@@ -11,6 +13,6 @@ export class DownloadSubtitleController implements Controller {
     const { id } = httpRequest.body
 
     await this.getSubtitle.get(id)
-    return await new Promise((resolve) => resolve(null))
+    return notFound(new NotFoundError('subtitle'))
   }
 }
