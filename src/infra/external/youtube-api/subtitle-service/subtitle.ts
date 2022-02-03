@@ -68,6 +68,12 @@ export class SubtitleYoutubeApiService implements CreateSubtitleService, Downloa
 
   async download (externalId: string): Promise<CaptionModel> {
     await this.authenticate()
+
+    google.youtube({
+      version: 'v3',
+      auth: this.OAuthClient
+    })
+
     return await new Promise((resolve) => resolve(null))
   }
 }
