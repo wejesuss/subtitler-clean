@@ -1,5 +1,7 @@
 import { DownloadSubtitleController } from './download-subtitle'
 import { HttpRequest, GetSubtitle, SubtitleModel } from './download-subtitle-protocols'
+import { notFound } from '../../helpers/http-helper'
+import { NotFoundError } from '../../errors'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   body: {
@@ -48,5 +50,14 @@ describe('Download Subtitle Controller', () => {
     await sut.handle(makeFakeHttpRequest())
 
     expect(getSubtitleSpy).toHaveBeenCalledWith('any_file_id')
+  })
+
+  test('Should return 404 if subtitle is not found', async () => {
+    const { sut, getSubtitleStub } = makeSut()
+    jest.spyOn(getSubtitleStub, 'get').mockReturnValueOnce(new Promise((resolve) => resolve(null)))
+
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse).toEqual(notFound(new NotFoundError('subtitle')))
   })
 })
