@@ -1,6 +1,6 @@
 import { Controller, HttpRequest, HttpResponse, GetSubtitle, DownloadSubtitle } from './download-subtitle-protocols'
 import { MissingParamError, NotFoundError, NotReadyError } from '../../errors'
-import { accepted, badRequest, internalServerError, notFound } from '../../helpers/http-helper'
+import { accepted, badRequest, internalServerError, notFound, ok } from '../../helpers/http-helper'
 
 export class DownloadSubtitleController implements Controller {
   private readonly getSubtitle: GetSubtitle
@@ -31,6 +31,10 @@ export class DownloadSubtitleController implements Controller {
       if (!captionModel.isReady) {
         return accepted(new NotReadyError('captions'))
       }
+
+      return ok({
+        captions: captionModel.captions
+      })
     } catch (error) {
       return internalServerError(error)
     }
