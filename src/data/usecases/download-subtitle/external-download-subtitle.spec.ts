@@ -42,4 +42,16 @@ describe('ExternalDownloadSubtitle Usecase', () => {
 
     expect(downloadSubtitleServiceSpy).toHaveBeenCalledWith(id)
   })
+
+  test('Should throw if DownloadSubtitleService throws', async () => {
+    const { sut, downloadSubtitleServiceStub } = makeSut()
+    jest.spyOn(downloadSubtitleServiceStub, 'download').mockImplementationOnce(async () => {
+      throw new Error()
+    })
+
+    const id = 'any_external_id'
+    const promise = sut.download(id)
+
+    await expect(promise).rejects.toThrow()
+  })
 })
