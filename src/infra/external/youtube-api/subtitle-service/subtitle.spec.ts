@@ -253,4 +253,21 @@ describe('SubtitleYoutubeApiService', () => {
     expect(mockGetAccessToken).toHaveBeenCalledTimes(1)
     expect(mockSetCredentials).toHaveBeenCalledTimes(1)
   })
+
+  test('Should throw if authenticate throws', async () => {
+    const { sut } = makeSut()
+    mockGetAccessToken.mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    let promise = sut.download('any_id')
+    await expect(promise).rejects.toThrow()
+
+    mockSetCredentials.mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    promise = sut.download('any_id')
+    await expect(promise).rejects.toThrow()
+  })
 })
