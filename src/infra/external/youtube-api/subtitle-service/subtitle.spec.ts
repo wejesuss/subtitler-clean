@@ -388,6 +388,18 @@ describe('SubtitleYoutubeApiService', () => {
     expect(mockCaptionsDownload).toHaveBeenCalledWith(captionsDownloadParams)
   })
 
+  test('Should throw if youtube captions download throws', async () => {
+    const { sut } = makeSut()
+    mockCaptionsDownload.mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const id = 'any_id'
+    const promise = sut.download(id)
+
+    await expect(promise).rejects.toThrow()
+  })
+
   test('Should not call youtube captions download if caption is not available', async () => {
     const { sut } = makeSut()
     mockCaptionsList.mockResolvedValueOnce({
