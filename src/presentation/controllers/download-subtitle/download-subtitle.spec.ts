@@ -1,7 +1,7 @@
 import { DownloadSubtitleController } from './download-subtitle'
 import { HttpRequest, GetSubtitle, SubtitleModel } from './download-subtitle-protocols'
-import { internalServerError, notFound } from '../../helpers/http-helper'
-import { NotFoundError, ServerError } from '../../errors'
+import { badRequest, internalServerError, notFound } from '../../helpers/http-helper'
+import { MissingParamError, NotFoundError, ServerError } from '../../errors'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   body: {
@@ -43,6 +43,15 @@ const makeSut = (): SutTypes => {
 }
 
 describe('Download Subtitle Controller', () => {
+  test('Should return 400 if id is not provided', async () => {
+    const { sut } = makeSut()
+
+    const httpRequest = { body: {} }
+    const httpResponse = await sut.handle(httpRequest)
+
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('id')))
+  })
+
   test('Should call GetSubtitle with correct value', async () => {
     const { sut, getSubtitleStub } = makeSut()
     const getSubtitleSpy = jest.spyOn(getSubtitleStub, 'get')
