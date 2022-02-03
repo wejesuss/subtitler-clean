@@ -23,7 +23,10 @@ export class DownloadSubtitleController implements Controller {
         return notFound(new NotFoundError('subtitle'))
       }
 
-      await this.downloadSubtitle.download(subtitle.external_id)
+      const captionModel = await this.downloadSubtitle.download(subtitle.external_id)
+      if (!captionModel) {
+        return notFound(new NotFoundError('captions'))
+      }
     } catch (error) {
       return internalServerError(error)
     }
