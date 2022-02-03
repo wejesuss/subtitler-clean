@@ -64,4 +64,13 @@ describe('ExternalDownloadSubtitle Usecase', () => {
 
     expect(caption).toBeFalsy()
   })
+
+  test('Should return caption model on success', async () => {
+    const { sut } = makeSut()
+
+    const id = 'any_external_id'
+    const caption = await sut.download(id)
+
+    expect(caption).toEqual(makeFakeCaptionModel())
+  })
 })
