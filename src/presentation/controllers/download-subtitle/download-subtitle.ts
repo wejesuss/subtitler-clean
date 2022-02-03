@@ -1,6 +1,6 @@
 import { Controller, HttpRequest, HttpResponse, GetSubtitle, DownloadSubtitle } from './download-subtitle-protocols'
-import { MissingParamError, NotFoundError } from '../../errors'
-import { badRequest, internalServerError, notFound } from '../../helpers/http-helper'
+import { MissingParamError, NotFoundError, NotReadyError } from '../../errors'
+import { accepted, badRequest, internalServerError, notFound } from '../../helpers/http-helper'
 
 export class DownloadSubtitleController implements Controller {
   private readonly getSubtitle: GetSubtitle
@@ -26,6 +26,10 @@ export class DownloadSubtitleController implements Controller {
       const captionModel = await this.downloadSubtitle.download(subtitle.external_id)
       if (!captionModel) {
         return notFound(new NotFoundError('captions'))
+      }
+
+      if (!captionModel.isReady) {
+        return accepted(new NotReadyError('captions'))
       }
     } catch (error) {
       return internalServerError(error)
