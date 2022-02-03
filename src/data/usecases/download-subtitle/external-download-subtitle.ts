@@ -10,8 +10,6 @@ export class ExternalDownloadSubtitle implements DownloadSubtitle {
   }
 
   async download (externalId: string): Promise<CaptionModel> {
-    await this.downloadSubtitleService.download(externalId)
-
-    return await new Promise((resolve) => resolve(null))
+    return await this.downloadSubtitleService.download(externalId)
   }
 }
