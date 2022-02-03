@@ -321,4 +321,16 @@ describe('SubtitleYoutubeApiService', () => {
 
     expect(mockCaptionsList).toHaveBeenCalledWith(captionsListParams)
   })
+
+  test('Should throw if youtube captions list throws', async () => {
+    const { sut } = makeSut()
+    mockCaptionsList.mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const id = 'any_id'
+    const promise = sut.download(id)
+
+    await expect(promise).rejects.toThrow()
+  })
 })
