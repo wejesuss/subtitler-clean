@@ -74,11 +74,19 @@ export class SubtitleYoutubeApiService implements CreateSubtitleService, Downloa
       auth: this.OAuthClient
     })
 
-    await youtube.captions.list({
+    const { data: { items } } = await youtube.captions.list({
       part: ['id', 'snippet'],
       videoId: externalId
     })
 
-    return await new Promise((resolve) => resolve(null))
+    const caption = items[0]
+    if (!caption) {
+      return null
+    }
+
+    await youtube.captions.download({
+      id: caption.id,
+      tfmt: 'srt'
+    })
   }
 }
