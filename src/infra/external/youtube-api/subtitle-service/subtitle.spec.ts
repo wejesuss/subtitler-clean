@@ -422,6 +422,30 @@ describe('SubtitleYoutubeApiService', () => {
     expect(mockCaptionsDownload).toHaveBeenCalledTimes(0)
   })
 
+  test('Should return empty string if caption is not ready yet', async () => {
+    const { sut } = makeSut()
+    mockCaptionsList.mockResolvedValueOnce({
+      data: {
+        items: [
+          {
+            id: 'any_id',
+            snippet: {
+              isDraft: true,
+              status: 'syncing'
+            }
+          }
+        ]
+      }
+    })
+
+    const caption = await sut.download('any_id')
+
+    expect(caption).toEqual({
+      isReady: false,
+      captions: ''
+    })
+  })
+
   test('Should return captions on success', async () => {
     const { sut } = makeSut()
 
