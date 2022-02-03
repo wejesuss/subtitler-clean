@@ -1,13 +1,15 @@
 import fs from 'fs'
 import { google, youtube_v3 } from 'googleapis'
+import { OAuth2Client } from 'google-auth-library'
 import {
   CreateSubtitleService,
   CreateSubtitleModel
 } from '../../../../data/protocols/create-subtitle-service'
 import { CreateVideoFromAudioStorage } from '../../../../data/protocols/create-video-from-audio-storage'
-import { OAuth2Client } from 'google-auth-library'
+import { DownloadSubtitleService } from '../../../../data/protocols/download-subtitle-service'
+import { CaptionModel } from '../../../../domain/models/caption'
 
-export class SubtitleYoutubeApiService implements CreateSubtitleService {
+export class SubtitleYoutubeApiService implements CreateSubtitleService, DownloadSubtitleService {
   private readonly createVideoFromAudio: CreateVideoFromAudioStorage
   private readonly OAuthClient: OAuth2Client
 
@@ -62,5 +64,10 @@ export class SubtitleYoutubeApiService implements CreateSubtitleService {
     const res = await youtube.videos.insert(insertParams)
 
     return res.data.id
+  }
+
+  async download (externalId: string): Promise<CaptionModel> {
+    await this.authenticate()
+    return await new Promise((resolve) => resolve(null))
   }
 }
