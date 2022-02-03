@@ -281,4 +281,14 @@ describe('SubtitleYoutubeApiService', () => {
       auth: OAuthClient
     })
   })
+
+  test('Should throw if google.youtube throws', async () => {
+    const { sut } = makeSut()
+    mockYoutube.mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const promise = sut.download('any_id')
+    await expect(promise).rejects.toThrow()
+  })
 })
