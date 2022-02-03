@@ -1,7 +1,5 @@
 import { DownloadSubtitleController } from './download-subtitle'
-import { GetSubtitle } from '../../../domain/usecases/get-subtitle'
-import { SubtitleModel } from '../../../domain/models/subtitle'
-import { HttpRequest } from '../../protocols'
+import { HttpRequest, GetSubtitle, SubtitleModel } from './download-subtitle-protocols'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   body: {

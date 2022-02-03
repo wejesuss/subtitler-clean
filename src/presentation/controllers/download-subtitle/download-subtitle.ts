@@ -1,5 +1,4 @@
-import { GetSubtitle } from '../../../domain/usecases/get-subtitle'
-import { Controller, HttpRequest, HttpResponse } from '../../protocols'
+import { Controller, HttpRequest, HttpResponse, GetSubtitle } from './download-subtitle-protocols'
 
 export class DownloadSubtitleController implements Controller {
   private readonly getSubtitle: GetSubtitle
