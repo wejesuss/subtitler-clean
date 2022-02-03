@@ -95,5 +95,10 @@ export class SubtitleYoutubeApiService implements CreateSubtitleService, Downloa
         captions: String(captions)
       }
     }
+
+    return {
+      isReady: false,
+      captions: ''
+    }
   }
 }
