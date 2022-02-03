@@ -1,7 +1,7 @@
 import { DownloadSubtitleController } from './download-subtitle'
 import { HttpRequest, GetSubtitle, SubtitleModel, CaptionModel, DownloadSubtitle } from './download-subtitle-protocols'
-import { badRequest, internalServerError, notFound } from '../../helpers/http-helper'
-import { MissingParamError, NotFoundError, ServerError } from '../../errors'
+import { accepted, badRequest, internalServerError, notFound } from '../../helpers/http-helper'
+import { MissingParamError, NotFoundError, NotReadyError, ServerError } from '../../errors'
 
 const makeFakeHttpRequest = (): HttpRequest => ({
   body: {
@@ -126,5 +126,17 @@ describe('Download Subtitle Controller', () => {
     const httpResponse = await sut.handle(makeFakeHttpRequest())
 
     expect(httpResponse).toEqual(notFound(new NotFoundError('captions')))
+  })
+
+  test('Should return 202 if captions is not ready yet', async () => {
+    const { sut, downloadSubtitleStub } = makeSut()
+    jest.spyOn(downloadSubtitleStub, 'download').mockReturnValueOnce(new Promise((resolve) => resolve({
+      isReady: false,
+      captions: ''
+    })))
+
+    const httpResponse = await sut.handle(makeFakeHttpRequest())
+
+    expect(httpResponse).toEqual(accepted(new NotReadyError('captions')))
   })
 })
