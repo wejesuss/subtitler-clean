@@ -387,4 +387,26 @@ describe('SubtitleYoutubeApiService', () => {
 
     expect(mockCaptionsDownload).toHaveBeenCalledWith(captionsDownloadParams)
   })
+
+  test('Should not call youtube captions download if caption is not available', async () => {
+    const { sut } = makeSut()
+    mockCaptionsList.mockResolvedValueOnce({
+      data: {
+        items: [
+          {
+            id: 'any_id',
+            snippet: {
+              isDraft: true,
+              status: 'syncing'
+            }
+          }
+        ]
+      }
+    })
+
+    const id = 'any_id'
+    await sut.download(id)
+
+    expect(mockCaptionsDownload).toHaveBeenCalledTimes(0)
+  })
 })
