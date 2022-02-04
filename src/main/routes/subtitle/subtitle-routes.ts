@@ -23,7 +23,12 @@ function makeOAuthClient (): OAuth2Client {
 function getConsentUrl (OAuthClient: OAuth2Client): void {
   const url = OAuthClient.generateAuthUrl({
     access_type: 'offline',
-    scope: ['https://www.googleapis.com/auth/youtube']
+    scope: [
+      'https://www.googleapis.com/auth/youtube',
+      'https://www.googleapis.com/auth/youtube.upload',
+      'https://www.googleapis.com/auth/youtube.force-ssl',
+      'https://www.googleapis.com/auth/youtubepartner'
+    ]
   })
 
   console.log('Give your consent:\n')
@@ -34,7 +39,10 @@ function getConsent (req: Request, res: Response): any {
   const code = req.query.code
 
   if (code && typeof code === 'string') {
-    if (OAuthClient.credentials.access_token && OAuthClient.credentials.refresh_token) {
+    if (
+      OAuthClient.credentials.access_token &&
+      OAuthClient.credentials.refresh_token
+    ) {
       return res.send('consent already given')
     }
 
@@ -53,6 +61,12 @@ function getConsent (req: Request, res: Response): any {
 
 export default (router: Router): void => {
   router.get('/subtitle/credentials', getConsent)
-  router.post('/create-subtitle', adaptRoute(makeCreateSubtitleController(inputImage, OAuthClient)))
-  router.get('/download-subtitle', adaptRoute(makeDownloadSubtitleController(inputImage, OAuthClient)))
+  router.post(
+    '/create-subtitle',
+    adaptRoute(makeCreateSubtitleController(inputImage, OAuthClient))
+  )
+  router.get(
+    '/download-subtitle',
+    adaptRoute(makeDownloadSubtitleController(inputImage, OAuthClient))
+  )
 }
