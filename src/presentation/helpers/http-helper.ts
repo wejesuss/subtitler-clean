@@ -28,3 +28,10 @@ export const ok = (body: any): HttpResponse => {
     body
   }
 }
+
+export const accepted = (body: any): HttpResponse => {
+  return {
+    statusCode: 202,
+    body
+  }
+}

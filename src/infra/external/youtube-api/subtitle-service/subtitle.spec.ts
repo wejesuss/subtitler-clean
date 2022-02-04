@@ -1,15 +1,48 @@
 /* eslint-disable import/first */
 const mockInsert = jest.fn().mockImplementation(async (params) => {
-  return await new Promise((resolve) => resolve({
-    data: {
-      id: 'valid_video_id'
-    }
-  }))
+  return await new Promise((resolve) =>
+    resolve({
+      data: {
+        id: 'valid_video_id'
+      }
+    })
+  )
 })
+
+const mockCaptionsList = jest.fn().mockImplementation(async (params) => {
+  return await new Promise((resolve) =>
+    resolve({
+      data: {
+        items: [
+          {
+            id: 'valid_caption_id',
+            snippet: {
+              isDraft: false,
+              status: 'serving'
+            }
+          }
+        ]
+      }
+    })
+  )
+})
+
+const mockCaptionsDownload = jest.fn().mockImplementation(async (params) => {
+  return await new Promise((resolve) =>
+    resolve({
+      data: 'any_timed_captions'
+    })
+  )
+})
+
 const mockYoutube = jest.fn().mockImplementation(() => {
   return {
     videos: {
       insert: mockInsert
+    },
+    captions: {
+      list: mockCaptionsList,
+      download: mockCaptionsDownload
     }
   }
 })
@@ -62,7 +95,9 @@ const makeMediaData = (): CreateSubtitleModel => ({
   path: 'any_path'
 })
 
-const makeFakeInsertParams = (mediaData: CreateSubtitleModel): youtube_v3.Params$Resource$Videos$Insert => ({
+const makeFakeInsertParams = (
+  mediaData: CreateSubtitleModel
+): youtube_v3.Params$Resource$Videos$Insert => ({
   part: ['id', 'snippet', 'status'],
   notifySubscribers: false,
   requestBody: {
@@ -107,7 +142,10 @@ interface SutTypes {
 const makeSut = (): SutTypes => {
   const createVideoFromAudioStub = makeCreateVideoFromAudio()
   const OAuthClient = makeOAuthClient()
-  const sut = new SubtitleYoutubeApiService(createVideoFromAudioStub, OAuthClient)
+  const sut = new SubtitleYoutubeApiService(
+    createVideoFromAudioStub,
+    OAuthClient
+  )
 
   return {
     sut,
@@ -130,7 +168,9 @@ describe('SubtitleYoutubeApiService', () => {
   test('Should call CreateVideoFromAudio if file mimetype refers to an audio', async () => {
     const { sut, createVideoFromAudioStub } = makeSut()
     const createVideoSpy = jest.spyOn(createVideoFromAudioStub, 'create')
-    const includesSpy = jest.spyOn(String.prototype, 'includes').mockReturnValueOnce(true)
+    const includesSpy = jest
+      .spyOn(String.prototype, 'includes')
+      .mockReturnValueOnce(true)
 
     await sut.create(makeMediaData())
 
@@ -141,9 +181,11 @@ describe('SubtitleYoutubeApiService', () => {
   test('Should throw if CreateVideoFromAudio throws', async () => {
     const { sut, createVideoFromAudioStub } = makeSut()
     jest.spyOn(String.prototype, 'includes').mockReturnValueOnce(true)
-    jest.spyOn(createVideoFromAudioStub, 'create').mockImplementationOnce(async () => {
-      throw new Error()
-    })
+    jest
+      .spyOn(createVideoFromAudioStub, 'create')
+      .mockImplementationOnce(async () => {
+        throw new Error()
+      })
 
     const promise = sut.create(makeMediaData())
 
@@ -243,5 +285,175 @@ describe('SubtitleYoutubeApiService', () => {
     const id = await sut.create(mediaData)
 
     expect(id).toBe('valid_video_id')
+  })
+
+  test('Should authenticate before downloading captions', async () => {
+    const { sut } = makeSut()
+
+    await sut.download('any_id')
+
+    expect(mockGetAccessToken).toHaveBeenCalledTimes(1)
+    expect(mockSetCredentials).toHaveBeenCalledTimes(1)
+  })
+
+  test('Should throw if authenticate throws', async () => {
+    const { sut } = makeSut()
+    mockGetAccessToken.mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    let promise = sut.download('any_id')
+    await expect(promise).rejects.toThrow()
+
+    mockSetCredentials.mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    promise = sut.download('any_id')
+    await expect(promise).rejects.toThrow()
+  })
+
+  test('Should create youtube service object before downloading captions', async () => {
+    const { sut, OAuthClient } = makeSut()
+
+    await sut.download('any_id')
+
+    expect(mockYoutube).toHaveBeenCalledWith({
+      version: 'v3',
+      auth: OAuthClient
+    })
+  })
+
+  test('Should throw if google.youtube throws', async () => {
+    const { sut } = makeSut()
+    mockYoutube.mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const promise = sut.download('any_id')
+    await expect(promise).rejects.toThrow()
+  })
+
+  test('Should call youtube captions list with correct values', async () => {
+    const { sut } = makeSut()
+
+    const id = 'any_id'
+    const captionsListParams = {
+      part: ['id', 'snippet'],
+      videoId: id
+    }
+
+    await sut.download(id)
+
+    expect(mockCaptionsList).toHaveBeenCalledWith(captionsListParams)
+  })
+
+  test('Should throw if youtube captions list throws', async () => {
+    const { sut } = makeSut()
+    mockCaptionsList.mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const id = 'any_id'
+    const promise = sut.download(id)
+
+    await expect(promise).rejects.toThrow()
+  })
+
+  test('Should return falsy if no caption is found', async () => {
+    const { sut } = makeSut()
+    mockCaptionsList.mockReturnValueOnce(new Promise((resolve) => resolve({
+      data: {
+        items: []
+      }
+    })))
+
+    const id = 'any_id'
+    const caption = await sut.download(id)
+
+    expect(caption).toBeFalsy()
+  })
+
+  test('Should call youtube captions download with correct values', async () => {
+    const { sut } = makeSut()
+
+    const id = 'any_id'
+    const captionsDownloadParams = {
+      id: 'valid_caption_id',
+      tfmt: 'srt'
+    }
+
+    await sut.download(id)
+
+    expect(mockCaptionsDownload).toHaveBeenCalledWith(captionsDownloadParams)
+  })
+
+  test('Should throw if youtube captions download throws', async () => {
+    const { sut } = makeSut()
+    mockCaptionsDownload.mockImplementationOnce(() => {
+      throw new Error()
+    })
+
+    const id = 'any_id'
+    const promise = sut.download(id)
+
+    await expect(promise).rejects.toThrow()
+  })
+
+  test('Should not call youtube captions download if caption is not available', async () => {
+    const { sut } = makeSut()
+    mockCaptionsList.mockResolvedValueOnce({
+      data: {
+        items: [
+          {
+            id: 'any_id',
+            snippet: {
+              isDraft: true,
+              status: 'syncing'
+            }
+          }
+        ]
+      }
+    })
+
+    const id = 'any_id'
+    await sut.download(id)
+
+    expect(mockCaptionsDownload).toHaveBeenCalledTimes(0)
+  })
+
+  test('Should return empty string if caption is not ready yet', async () => {
+    const { sut } = makeSut()
+    mockCaptionsList.mockResolvedValueOnce({
+      data: {
+        items: [
+          {
+            id: 'any_id',
+            snippet: {
+              isDraft: true,
+              status: 'syncing'
+            }
+          }
+        ]
+      }
+    })
+
+    const caption = await sut.download('any_id')
+
+    expect(caption).toEqual({
+      isReady: false,
+      captions: ''
+    })
+  })
+
+  test('Should return captions on success', async () => {
+    const { sut } = makeSut()
+
+    const caption = await sut.download('any_id')
+
+    expect(caption).toEqual({
+      isReady: true,
+      captions: 'any_timed_captions'
+    })
   })
 })
