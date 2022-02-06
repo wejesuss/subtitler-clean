@@ -28,15 +28,15 @@ form.addEventListener('submit', (e) => {
       return res.json()
     })
     .then((res) => {
+      resetMessages()
+
       if (res.error) {
         const mapErrorName = createMapErroName()
         const mappedError = mapErrorName.get(res.name)
 
-        resetMessages()
         return showError(mappedError || res.error)
       }
 
-      resetMessages()
       showResult(`Enviado com sucesso! Seu áudio/vídeo será legendado. Esse processo pode levar algumas horas. Lembre-se de guardar o seu id: ${id}`)
     })
     .catch((reason) => {

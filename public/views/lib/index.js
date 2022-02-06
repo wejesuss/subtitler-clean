@@ -32,16 +32,16 @@ form.addEventListener('submit', (e) => {
       return res.json()
     })
     .then((res) => {
+      resetMessages()
+
       if (res.error) {
         const mapErrorName = createMapErroName()
         const mappedError = mapErrorName.get(res.name)
 
-        resetMessages()
         return showError(mappedError || res.error)
       }
 
       const id = res.id
-      resetMessages()
       showResult(`Enviado com sucesso! Guarde seu id: ${id}`)
     })
     .catch((reason) => {
