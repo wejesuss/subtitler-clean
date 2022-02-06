@@ -4,8 +4,13 @@ import { adaptRequestFile } from './express-multer-adapter'
 
 export const adaptRoute = (controller: Controller) => {
   return async (req: Request, res: Response) => {
+    const body = {
+      ...req.body,
+      ...req.params
+    }
+
     const httpRequest = {
-      body: req.body,
+      body: body,
       file: req.file ? adaptRequestFile(req.file) : undefined
     }
 

@@ -66,7 +66,7 @@ export default (router: Router): void => {
     adaptRoute(makeCreateSubtitleController(inputImage, OAuthClient))
   )
   router.get(
-    '/download-subtitle',
+    '/download-subtitle/:id',
     adaptRoute(makeDownloadSubtitleController(inputImage, OAuthClient))
   )
 }
