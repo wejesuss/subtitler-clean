@@ -7,7 +7,7 @@ export function createMapErroName () {
   const mapErrorName = new Map()
   mapErrorName.set('MissingParamError', 'Parâmetro não enviado: Verifique se esqueceu algo')
   mapErrorName.set('InvalidParamError', 'Parâmetro inválido: Tem certeza que está correto?')
-  mapErrorName.set('NotFoundError', 'Recurso não encontrado: Talvez ainda não esteja pronto ou foi apagado')
+  mapErrorName.set('NotFoundError', 'Recurso não encontrado: Talvez ainda não esteja pronto, não exista ou foi apagado')
   mapErrorName.set('ServerError', 'Erro inesperado no servidor, tente novamente mais tarde')
 
   return mapErrorName
