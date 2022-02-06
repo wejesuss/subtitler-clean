@@ -1,9 +1,9 @@
 import { Request, Response, Router } from 'express'
 import { Auth } from 'googleapis'
-import env from '../../config/env'
-import { adaptRoute } from '../../adapters/express-route-adapter'
-import { makeCreateSubtitleController } from '../../factories/create-subtitle'
-import { makeDownloadSubtitleController } from '../../factories/download-subtitle'
+import env from '../../../config/env'
+import { adaptRoute } from '../../../adapters/express-route-adapter'
+import { makeCreateSubtitleController } from '../../../factories/create-subtitle'
+import { makeDownloadSubtitleController } from '../../../factories/download-subtitle'
 import { OAuth2Client } from 'google-auth-library'
 
 const inputImage = env.inputImage

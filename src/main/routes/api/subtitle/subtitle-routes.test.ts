@@ -1,6 +1,6 @@
 import request from 'supertest'
-import app from '../../config/app'
-import { SQLiteHelper } from '../../../infra/db/sqlite/helpers/sqlite-helper'
+import app from '../../../config/app'
+import { SQLiteHelper } from '../../../../infra/db/sqlite/helpers/sqlite-helper'
 
 async function addFile (): Promise<string> {
   const file = await SQLiteHelper.insertOne('files', {
