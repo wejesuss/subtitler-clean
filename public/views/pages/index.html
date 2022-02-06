@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/public/views/styles/base.css" />
     <link rel="stylesheet" href="/public/views/styles/header.css" />
+    <link rel="stylesheet" href="/public/views/styles/form.css" />
+    <link rel="stylesheet" href="/public/views/styles/result.css" />
     <link rel="stylesheet" href="/public/views/styles/index.css" />
     <title>Subtitler</title>
   </head>
@@ -17,7 +19,7 @@
             <a href="/">Enviar Áudio</a>
           </li>
           <li>
-            <a href="#">Criar Legenda</a>
+            <a href="/create-subtitle">Criar Legenda</a>
           </li>
           <li>
             <a href="#">Baixar Legenda</a>
@@ -254,10 +256,10 @@
 
     <section class="result">
       <p class="error"></p>
-      <p class="id"></p>
+      <p class="success"></p>
       <p class="loading"></p>
     </section>
 
-    <script src="/public/views/lib/index.js"></script>
+    <script src="/public/views/lib/index.js" type="module"></script>
   </body>
 </html>

@@ -1,0 +1,25 @@
+form {
+  margin: 8rem auto 0;
+  width: 80%;
+  max-width: 920px;
+  border: 1px solid #585858;
+  padding: 1.6rem 2rem;
+}
+
+button {
+  width: 180px;
+  height: 40px;
+  padding: 8px;
+  border-radius: 24px;
+  background-color: transparent;
+  border: 1px solid #ff944b;
+  margin-left: 16px;
+  font-weight: bold;
+  transition: all 0.4s ease-in-out;
+}
+
+button:hover {
+  color: rgb(255 255 255);
+  background-color: #ff944b;
+  border: 1px solid #b45413;
+}

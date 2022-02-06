@@ -9,6 +9,12 @@ header ul {
   align-items: center;
 }
 
+@media screen and (max-width: 425px) {
+  header ul {
+    flex-direction: column;
+  }
+}
+
 header ul li {
   width: 100%;
   height: 100%;

@@ -6,26 +6,22 @@ form.addEventListener('submit', (e) => {
   resetMessages()
 
   const formData = new FormData(form)
-  const file = formData.get('media-file')
-  const language = formData.get('language')
+  const id = formData.get('id')
 
-  if (!file || (!file.type.includes('audio') && !file.type.includes('video'))) {
+  if (!id || typeof id !== 'string') {
     resetMessages()
-    showError('Você não selecionou um tipo de arquivo válido')
-    return false
-  }
-
-  if (!language) {
-    resetMessages()
-    showError('Você não selecionou uma língua')
+    showError('Você não preencheu o id do arquivo')
     return false
   }
 
   const intervalId = showThreeDotsLoading()
 
-  fetch('/api/upload', {
+  fetch('/api/create-subtitle', {
     method: 'POST',
-    body: formData
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ id })
   })
     .then((res) => {
       clearInterval(intervalId)
@@ -40,9 +36,8 @@ form.addEventListener('submit', (e) => {
         return showError(mappedError || res.error)
       }
 
-      const id = res.id
       resetMessages()
-      showResult(`Enviado com sucesso! Guarde seu id: ${id}`)
+      showResult(`Enviado com sucesso! Seu áudio/vídeo será legendado. Esse processo pode levar algumas horas. Lembre-se de guardar o seu id: ${id}`)
     })
     .catch((reason) => {
       resetMessages()

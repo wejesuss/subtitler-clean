@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/public/views/styles/base.css" />
+    <link rel="stylesheet" href="/public/views/styles/header.css" />
+    <link rel="stylesheet" href="/public/views/styles/form.css" />
+    <link rel="stylesheet" href="/public/views/styles/result.css" />
+    <link rel="stylesheet" href="/public/views/styles/create-subtitle.css" />
+    <title>Subtitler - Envie para ser legendado</title>
+  </head>
+  <body>
+    <header>
+      <nav>
+        <ul>
+          <li>
+            <a href="/">Enviar Áudio</a>
+          </li>
+          <li class="active">
+            <a href="/create-subtitle">Criar Legenda</a>
+          </li>
+          <li>
+            <a href="#">Baixar Legenda</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <h1>Envie seu áudio para ser legendado</h1>
+    <p>Insira o id do seu upload, ele será enviado para a criação de legenda</p>
+    <form
+      action="/create-subtitle"
+      method="post"
+      enctype="application/x-www-form-urlencoded"
+    >
+      <input
+        type="text"
+        name="id"
+        id="id"
+        placeholder="Insira o ID que recebeu ao enviar o áudio"
+      />
+      <button type="submit">Enviar</button>
+    </form>
+
+    <section class="result">
+      <p class="error"></p>
+      <p class="success"></p>
+      <p class="loading"></p>
+    </section>
+
+    <script src="/public/views/lib/create-subtitle.js" type="module"></script>
+  </body>
+</html>
