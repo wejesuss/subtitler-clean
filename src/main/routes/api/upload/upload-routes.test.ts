@@ -1,7 +1,7 @@
 import request from 'supertest'
-import app from '../../config/app'
+import app from '../../../config/app'
 import { existsSync } from 'fs'
-import { SQLiteHelper } from '../../../infra/db/sqlite/helpers/sqlite-helper'
+import { SQLiteHelper } from '../../../../infra/db/sqlite/helpers/sqlite-helper'
 
 describe('Upload Route', () => {
   beforeAll(async () => {
