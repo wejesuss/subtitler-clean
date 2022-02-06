@@ -17,7 +17,8 @@ header ul li {
   transition: all 0.3s;
 }
 
-header ul li:hover {
+header ul li:hover,
+header ul li.active {
   background: #ff944b;
   border-color: #916d0dfe;
 }
