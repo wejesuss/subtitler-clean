@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="/public/views/styles/header.css" />
     <link rel="stylesheet" href="/public/views/styles/form.css" />
     <link rel="stylesheet" href="/public/views/styles/result.css" />
-    <link rel="stylesheet" href="/public/views/styles/create-subtitle.css" />
-    <title>Subtitler - Envie para ser legendado</title>
+    <link rel="stylesheet" href="/public/views/styles/download-subtitle.css" />
+    <title>Subtitler - Baixe sua legenda</title>
   </head>
   <body>
     <header>
@@ -18,21 +18,23 @@
           <li>
             <a href="/">Enviar Áudio</a>
           </li>
-          <li class="active">
+          <li>
             <a href="/create-subtitle">Criar Legenda</a>
           </li>
-          <li>
+          <li class="active">
             <a href="/download-subtitle">Baixar Legenda</a>
           </li>
         </ul>
       </nav>
     </header>
 
-    <h1>Envie seu áudio para ser legendado</h1>
-    <p>Insira o id do seu upload, ele será enviado para a criação de legenda</p>
+    <h1>Baixe sua legenda</h1>
+    <p>
+      Insira o id do seu upload, se a legenda estiver pronta, poderá baixá-la
+    </p>
     <form
-      action="/create-subtitle"
-      method="post"
+      action="/download-subtitle"
+      method="get"
       enctype="application/x-www-form-urlencoded"
     >
       <input
@@ -50,6 +52,15 @@
       <p class="loading"></p>
     </section>
 
-    <script src="/public/views/lib/create-subtitle.js" type="module"></script>
+    <section class="download">
+      <a
+        href="#"
+        download="subtitle.srt"
+        id="download-button"
+        type="application/octet-stream"
+      ></a>
+    </section>
+
+    <script src="/public/views/lib/download-subtitle.js" type="module"></script>
   </body>
 </html>
